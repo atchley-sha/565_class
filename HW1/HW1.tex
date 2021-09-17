@@ -1,0 +1,248 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{geometry}
+\usepackage[document]{ragged2e}
+\setlength{\parindent}{0.5in}
+\setlength{\RaggedRightParindent}{\parindent}
+\usepackage{indentfirst}
+
+\usepackage{setspace}
+\usepackage{titling}
+\usepackage{fancyhdr}
+
+\usepackage{lmodern}
+
+\usepackage{graphicx}
+\graphicspath{{./}}
+
+\usepackage{titlesec}
+\titleformat{\section}
+	{\normalfont\normalsize\sc}{}{0pt}{\\}{}
+	% format, label, space between number and text, before code, after code
+\titlespacing{\section}
+	{0pt}{0pt}{0pt}
+	% left, top, bottom
+
+% \pagestyle{fancy}
+% \fancyhf{}
+% \rhead{Atchley \thepage}
+% \renewcommand{\headrulewidth}{0pt}
+
+\newcommand{\problem}[2]{\bigskip \noindent \textbf{Homework problem 1.#1: #2}\par}
+\newcommand{\reffig}[1]{Figure \ref{#1}}
+
+\doublespacing
+\geometry{letterpaper, margin=1in}
+\setlength{\parindent}{0.5in}
+
+\title{HW \#1: Model Building Blocks}
+\author{Hayden Atchley}
+\date{12 September 2021}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\noindent\theauthor\\
+\noindent Dr. Gregory Macfarlane\\
+\noindent CE 565\\
+\noindent\thedate\\
+\noindent\centering\thetitle\\
+\RaggedRight
+
+\problem{1}{Socioeconomic data visualization}
+	Using the TAZ layer and socioeconomic data given as inputs to the model, I created a set of maps showing various socioeconomic variables by zone.
+	These variables are: Total households (\reffig{fig:hh}), Household density (\reffig{fig:hhdens}), Total jobs (\reffig{fig:jobs}), Job density (\reffig{fig:jobsdens}), and Employment by type (Figures \ref{fig:jobtype}, \ref{fig:jobtypezoom}).
+	The location of the central business district (CBD) is clear from the map of job density, and is shown in \reffig{fig:cbd}.
+	Additionally, there appears to be another employment center to the west of the CBD, and is shown as well (\reffig{fig:obd}).
+	I also included a satellite image of the area from Google Maps (\reffig{fig:sat}) for reference.
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/HH}
+		\caption{Total households shown by traffic analysis zone (TAZ)}
+		\label{fig:hh}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/HHDens}
+		\caption{Household density shown by TAZ, households per acre}
+		\label{fig:hhdens}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/Jobs}
+		\caption{Total jobs shown by TAZ}
+		\label{fig:jobs}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/JobDens}
+		\caption{Job density shown by TAZ, jobs per acre}
+		\label{fig:jobsdens}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/JobTypes}
+		\caption{Job type distribution shown by TAZ, as percentage of total jobs}
+		\label{fig:jobtype}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/JobTypesZoomed}
+		\caption{Job type distribution shown by TAZ, as percentage of total jobs (zoomed in)}
+		\label{fig:jobtypezoom}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/CBD}
+		\caption{Location of central business district with TAZ numbers}
+		\label{fig:cbd}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/OtherBD}
+		\caption{Location of other employment center district with TAZ numbers}
+		\label{fig:obd}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-1_pictures/satellite}
+		\caption{Satellite imagery of study area, courtesy of Google Maps}
+		\label{fig:sat}
+	\end{figure}
+
+\pagebreak
+
+\problem{2}{Link information visualization}
+	Using the output network obtained from the model, I created maps based on various parameters of each link: Link type (\reffig{fig:linktype}), Link free flow speed (\reffig{fig:linkffs}), and Link hourly capacity (\reffig{fig:linkcap}).
+	It is clear from these maps that a major freeway runs along the north edge of the study area, and a principal arterial runs north-south basically through the center of the city.
+	Again a satellite image is given (\reffig{fig:sat}) for reference.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-2_pictures/LinkType}
+		\caption{Highway links by type}
+		\label{fig:linktype}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-2_pictures/LinkFFS}
+		\caption{Highway links by free flow speed}
+		\label{fig:linkffs}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-2_pictures/LinkCAP}
+		\caption{Highway links by capacity}
+		\label{fig:linkcap}
+	\end{figure}
+
+\pagebreak
+
+\problem{3}{Shortest paths}
+	In CUBE I found the shortest distance between Zone 195 and Zone 109, using both a free flow speed calculation (\reffig{fig:shortffs}) and a raw distance calculation (\reffig{fig:shortdist}).
+	The two paths differ considerably from each other, as the path using the free flow speed calculation uses a major road that has a much higher speed than the local roads used in the raw distance calculation.
+	I have included a path calculation from Google maps between these same zones around 2AM (\reffig{fig:shortmap}), and it matches rather closely the path from the free flow speed calculation.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-3_pictures/Short_FFS}
+		\caption{Shortest path between TAZ 195 and 109 by free flow speed}
+		\label{fig:shortffs}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-3_pictures/195-109_dist}
+		\caption{Shortest path between TAZ 195 and 109 by raw distance}
+		\label{fig:shortdist}
+	\end{figure}
+
+	\begin{figure}[p]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-3_pictures/shortmap}
+		\caption{Shortest path between TAZ 195 and 109 according to Google Maps}
+		\label{fig:shortmap}
+	\end{figure}
+
+\pagebreak
+
+\problem{4}{Highway Assessment Report}
+	The highway assessment report (an output of the model) contains information about vehicle hours and miles traveled by facility type.
+	The report is tabulated below in Table \ref{tab:har}.
+	The table has been editorialized to clarify the original abbreviations used.
+	
+	\begin{table}[h]
+		\centering
+		\caption{Highway assessment report}
+		\label{tab:har}
+		\bigskip
+	\begin{tabular}{l c c}
+		Facility Type & Vehicle Miles Traveled & Vehicle Hours Traveled \\
+		\hline
+		1 (Principal Freeway) & 1799198 & 26710 \\
+		2 (Minor Freeway) & 134847 & 2250 \\
+		3 (Principal Arterial) & 722354 & 16404 \\
+		4 (Major Arterial) & 113722 & 3571 \\
+		5 (Minor Arterial) & 819899 & 21891 \\
+		6 (Major Collector) & 243297 & 7004 \\
+		7 (Minor Collector) & 92553 & 2522 \\
+		8 (Local) & 48850 & 1771 \\
+		9 (High-speed Ramp) & 24942 & 443 \\
+		10 (Low-speed Ramp) & 52382 & 1475 \\
+		11 (Centroid Connector) & 0 & 0 \\
+		12 (External Station Connector) & 0 & 0 \\
+		\hline
+		Total & 4052043 & 84042
+	\end{tabular}
+	\end{table}
+	
+	From this table we can see that \(1 799 198 + 134 847 = 1 934 045\) miles were traveled on freeways, which is \(\frac{1 934 045}{4 052 043} = 47.7\%\) of the total miles traveled.
+	
+\pagebreak
+
+\problem{5}{PM Level of Service}
+	Using the model's output volume to capacity ratios, I created a map (\reffig{fig:los}) based on the level of service (LOS) values given in Table \ref{tab:los} below:
+	
+	\begin{table}[h]
+		\centering
+		\caption{Level of service values}
+		\label{tab:los}
+		\bigskip
+		\begin{tabular}{c c}
+			LOS & V/C \\
+			\hline
+			A & \(< 0.35\) \\
+			B & 0.35\textendash0.54 \\
+			C & 0.55\textendash0.77 \\
+			D & 0.78\textendash0.93 \\
+			E & 0.94\textendash0.99 \\
+			F & \(\geq 1.00\)
+		\end{tabular}
+	\end{table}
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[height=0.4\textheight]{1-5_pictures/LinkLOS}
+		\caption{Level of service of each highway link}
+		\label{fig:los}
+	\end{figure}
+
+	From this map it would appear that the roads in the study area are all very over-engineered.
+	However, I believe the reason for this is that we have not yet calibrated the model correctly, so the actual LOS may be very different once the model is calibrated.
+
+
+\end{document}

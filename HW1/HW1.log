@@ -1,0 +1,452 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (MiKTeX 21.2) (preloaded format=pdflatex 2021.2.22)  12 SEP 2021 22:57
+entering extended mode
+**./HW1.tex
+(HW1.tex
+LaTeX2e <2020-10-01> patch level 4
+L3 programming layer <2021-02-18> xparse <2020-03-03>
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2020/04/10 v1.4m Standard LaTeX document class
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2020/04/10 v1.4m Standard LaTeX file (size option)
+)
+\c@part=\count179
+\c@section=\count180
+\c@subsection=\count181
+\c@subsubsection=\count182
+\c@paragraph=\count183
+\c@subparagraph=\count184
+\c@figure=\count185
+\c@table=\count186
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2020/08/01 v1.3d Input encoding file
+\inpenc@prehook=\toks15
+\inpenc@posthook=\toks16
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2021/01/26 3.53 The Babel package
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.def
+File: babel.def 2021/01/26 3.53 Babel common definitions
+\babel@savecnt=\count187
+\U@D=\dimen139
+\l@babelnohyphens=\language79
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+\bbl@readstream=\read2
+)
+\bbl@dirlevel=\count188
+
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/babel-english\english.l
+df
+Language: english 2017/06/06 v3.3r English support from the babel system
+Package babel Info: \l@canadian = using hyphenrules for english
+(babel)             (\language0) on input line 102.
+Package babel Info: \l@australian = using hyphenrules for ukenglish
+(babel)             (\language73) on input line 105.
+Package babel Info: \l@newzealand = using hyphenrules for ukenglish
+(babel)             (\language73) on input line 108.
+))
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+))
+\Gm@cnth=\count189
+\Gm@cntv=\count190
+\c@Gm@tempcnt=\count191
+\Gm@bindingoffset=\dimen140
+\Gm@wd@mp=\dimen141
+\Gm@odd@mp=\dimen142
+\Gm@even@mp=\dimen143
+\Gm@layoutwidth=\dimen144
+\Gm@layoutheight=\dimen145
+\Gm@layouthoffset=\dimen146
+\Gm@layoutvoffset=\dimen147
+\Gm@dimlist=\toks18
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty
+Package: ragged2e 2021/02/05 v3.0 ragged2e Package
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/everysel\everysel.sty
+Package: everysel 2021/01/20 v2.1 EverySelectfont Package (MS)
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/everysel\everysel-2011-
+10-28.sty))
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/footmisc\footmisc.sty
+Package: footmisc 2011/06/06 v5.5b a miscellany of footnote facilities
+\FN@temptoken=\toks19
+\footnotemargin=\dimen148
+\c@pp@next@reset=\count192
+Package footmisc Info: Declaring symbol style bringhurst on input line 855.
+Package footmisc Info: Declaring symbol style chicago on input line 863.
+Package footmisc Info: Declaring symbol style wiley on input line 872.
+Package footmisc Info: Declaring symbol style lamport-robust on input line 883.
+
+Package footmisc Info: Declaring symbol style lamport* on input line 903.
+Package footmisc Info: Declaring symbol style lamport*-robust on input line 924
+.
+)
+\CenteringLeftskip=\skip49
+\RaggedLeftLeftskip=\skip50
+\RaggedRightLeftskip=\skip51
+\CenteringRightskip=\skip52
+\RaggedLeftRightskip=\skip53
+\RaggedRightRightskip=\skip54
+\CenteringParfillskip=\skip55
+\RaggedLeftParfillskip=\skip56
+\RaggedRightParfillskip=\skip57
+\JustifyingParfillskip=\skip58
+\CenteringParindent=\skip59
+\RaggedLeftParindent=\skip60
+\RaggedRightParindent=\skip61
+\JustifyingParindent=\skip62
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/latex-tools\indentfirst
+.sty
+Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2011/12/19 v6.7a set line spacing
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/titling\titling.sty
+Package: titling 2009/09/04 v2.1d maketitle typesetting
+\thanksmarkwidth=\skip63
+\thanksmargin=\skip64
+\droptitle=\skip65
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+Package: fancyhdr 2021/01/28 v4.0.1 Extensive control of page headers and foote
+rs
+\f@nch@headwidth=\skip66
+\f@nch@O@elh=\skip67
+\f@nch@O@erh=\skip68
+\f@nch@O@olh=\skip69
+\f@nch@O@orh=\skip70
+\f@nch@O@elf=\skip71
+\f@nch@O@erf=\skip72
+\f@nch@O@olf=\skip73
+\f@nch@O@orf=\skip74
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
+Package: lmodern 2009/10/30 v1.6 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2020/09/09 v1.2b Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2020/08/30 v1.4c Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen149
+\Gin@req@width=\dimen150
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+Package: titlesec 2019/10/16 v2.13 Sectioning titles
+\ttl@box=\box47
+\beforetitleunit=\skip75
+\aftertitleunit=\skip76
+\ttl@plus=\dimen151
+\ttl@minus=\dimen152
+\ttl@toksa=\toks20
+\titlewidth=\dimen153
+\titlewidthlast=\dimen154
+\titlewidthfirst=\dimen155
+)
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 4
+6.
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
+File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def
+File: l3backend-pdftex.def 2021-02-18 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count193
+\l__pdf_internal_box=\box48
+) (HW1.aux)
+\openout1 = `HW1.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: letterpaper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=469.75502pt
+* \textheight=650.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=44.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package ragged2e Info: ABD: executing \RaggedRight on input line 46.
+ABD: EverySelectfont initializing macros
+LaTeX Info: Redefining \selectfont on input line 46.
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count194
+\scratchdimen=\dimen156
+\scratchbox=\box49
+\nofMPsegments=\count195
+\nofMParguments=\count196
+\everyMPshowfont=\toks21
+\MPscratchCnt=\count197
+\MPscratchDim=\dimen157
+\MPnumerator=\count198
+\makeMPintoPDFobject=\count199
+\everyMPtoPDFconversion=\toks22
+)
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+)
+<1-1_pictures/HH.png, id=1, 803.4015pt x 562.2606pt>
+File: 1-1_pictures/HH.png Graphic file (type png)
+<use 1-1_pictures/HH.png>
+Package pdftex.def Info: 1-1_pictures/HH.png  used on input line 64.
+(pdftex.def)             Requested size: 371.75125pt x 260.16803pt.
+<1-1_pictures/HHDens.png, id=3, 803.4015pt x 562.2606pt>
+File: 1-1_pictures/HHDens.png Graphic file (type png)
+<use 1-1_pictures/HHDens.png>
+Package pdftex.def Info: 1-1_pictures/HHDens.png  used on input line 71.
+(pdftex.def)             Requested size: 371.75125pt x 260.16803pt.
+<1-1_pictures/Jobs.png, id=4, 803.4015pt x 562.2606pt>
+File: 1-1_pictures/Jobs.png Graphic file (type png)
+<use 1-1_pictures/Jobs.png>
+Package pdftex.def Info: 1-1_pictures/Jobs.png  used on input line 78.
+(pdftex.def)             Requested size: 371.75125pt x 260.16803pt.
+<1-1_pictures/JobDens.png, id=5, 803.4015pt x 562.2606pt>
+File: 1-1_pictures/JobDens.png Graphic file (type png)
+<use 1-1_pictures/JobDens.png>
+Package pdftex.def Info: 1-1_pictures/JobDens.png  used on input line 85.
+(pdftex.def)             Requested size: 371.75125pt x 260.16803pt.
+<1-1_pictures/JobTypes.png, id=6, 803.4015pt x 562.2606pt>
+File: 1-1_pictures/JobTypes.png Graphic file (type png)
+<use 1-1_pictures/JobTypes.png>
+Package pdftex.def Info: 1-1_pictures/JobTypes.png  used on input line 92.
+(pdftex.def)             Requested size: 371.75125pt x 260.16803pt.
+<1-1_pictures/JobTypesZoomed.png, id=7, 845.0772pt x 597.432pt>
+File: 1-1_pictures/JobTypesZoomed.png Graphic file (type png)
+<use 1-1_pictures/JobTypesZoomed.png>
+Package pdftex.def Info: 1-1_pictures/JobTypesZoomed.png  used on input line 99
+.
+(pdftex.def)             Requested size: 368.01825pt x 260.16803pt.
+<1-1_pictures/CBD.png, id=8, 845.0772pt x 597.432pt>
+File: 1-1_pictures/CBD.png Graphic file (type png)
+<use 1-1_pictures/CBD.png>
+Package pdftex.def Info: 1-1_pictures/CBD.png  used on input line 106.
+(pdftex.def)             Requested size: 368.01825pt x 260.16803pt.
+<1-1_pictures/OtherBD.png, id=9, 845.0772pt x 597.432pt>
+File: 1-1_pictures/OtherBD.png Graphic file (type png)
+<use 1-1_pictures/OtherBD.png>
+Package pdftex.def Info: 1-1_pictures/OtherBD.png  used on input line 113.
+(pdftex.def)             Requested size: 368.01825pt x 260.16803pt.
+<1-1_pictures/satellite.jpg, id=10, 1138.2525pt x 680.5425pt>
+File: 1-1_pictures/satellite.jpg Graphic file (type jpg)
+<use 1-1_pictures/satellite.jpg>
+Package pdftex.def Info: 1-1_pictures/satellite.jpg  used on input line 120.
+(pdftex.def)             Requested size: 435.1457pt x 260.16803pt.
+ [1
+
+{C:/Users/shayd/AppData/Local/MiKTeX/pdftex/config/pdftex.map} <./1-1_pictures/
+HH.png>] [2 <./1-1_pictures/HHDens.png> <./1-1_pictures/Jobs.png>]
+[3 <./1-1_pictures/JobDens.png> <./1-1_pictures/JobTypes.png>] [4 <./1-1_pictur
+es/JobTypesZoomed.png> <./1-1_pictures/CBD.png>] [5 <./1-1_pictures/OtherBD.png
+> <./1-1_pictures/satellite.jpg>]
+<1-2_pictures/LinkType.png, id=37, 811.3512pt x 569.2467pt>
+File: 1-2_pictures/LinkType.png Graphic file (type png)
+<use 1-2_pictures/LinkType.png>
+Package pdftex.def Info: 1-2_pictures/LinkType.png  used on input line 134.
+(pdftex.def)             Requested size: 370.82431pt x 260.16803pt.
+<1-2_pictures/LinkFFS.png, id=38, 811.3512pt x 569.2467pt>
+File: 1-2_pictures/LinkFFS.png Graphic file (type png)
+<use 1-2_pictures/LinkFFS.png>
+Package pdftex.def Info: 1-2_pictures/LinkFFS.png  used on input line 141.
+(pdftex.def)             Requested size: 370.82431pt x 260.16803pt.
+<1-2_pictures/LinkCAP.png, id=39, 811.3512pt x 569.2467pt>
+File: 1-2_pictures/LinkCAP.png Graphic file (type png)
+<use 1-2_pictures/LinkCAP.png>
+Package pdftex.def Info: 1-2_pictures/LinkCAP.png  used on input line 148.
+(pdftex.def)             Requested size: 370.82431pt x 260.16803pt.
+ [6 <./1-2_pictures/LinkType.png>] [7 <./1-2_pictures/LinkFFS.png> <./1-2_pictu
+res/LinkCAP.png>]
+<1-3_pictures/Short_FFS.png, id=50, 825.83531pt x 590.95781pt>
+File: 1-3_pictures/Short_FFS.png Graphic file (type png)
+<use 1-3_pictures/Short_FFS.png>
+Package pdftex.def Info: 1-3_pictures/Short_FFS.png  used on input line 162.
+(pdftex.def)             Requested size: 363.58289pt x 260.16803pt.
+<1-3_pictures/195-109_dist.png, id=51, 910.90312pt x 608.2725pt>
+File: 1-3_pictures/195-109_dist.png Graphic file (type png)
+<use 1-3_pictures/195-109_dist.png>
+Package pdftex.def Info: 1-3_pictures/195-109_dist.png  used on input line 169.
+
+(pdftex.def)             Requested size: 389.60971pt x 260.16803pt.
+<1-3_pictures/shortmap.png, id=52, 911.65594pt x 555.57562pt>
+File: 1-3_pictures/shortmap.png Graphic file (type png)
+<use 1-3_pictures/shortmap.png>
+Package pdftex.def Info: 1-3_pictures/shortmap.png  used on input line 176.
+(pdftex.def)             Requested size: 426.92035pt x 260.16803pt.
+ [8 <./1-3_pictures/Short_FFS.png>] [9 <./1-3_pictures/195-109_dist.png> <./1-3
+_pictures/shortmap.png>]
+Overfull \hbox (3.08891pt too wide) in paragraph at lines 184--187
+[]\OT1/lmr/m/n/12 The high-way as-sess-ment re-port (an out-put of the model) c
+on-tains in-for-ma-tion about 
+ []
+
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
+93.
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
+File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
+193.
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
+File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
+193.
+
+(C:\Users\shayd\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
+File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 193.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 193.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 193.
+ [10]
+<1-5_pictures/LinkLOS.png, id=67, 811.3512pt x 569.2467pt>
+File: 1-5_pictures/LinkLOS.png Graphic file (type png)
+<use 1-5_pictures/LinkLOS.png>
+Package pdftex.def Info: 1-5_pictures/LinkLOS.png  used on input line 239.
+(pdftex.def)             Requested size: 370.82431pt x 260.16803pt.
+
+[11 <./1-5_pictures/LinkLOS.png>] (HW1.aux) ) 
+Here is how much of TeX's memory you used:
+ 3471 strings out of 479334
+ 54498 string characters out of 2857084
+ 364114 words of memory out of 3000000
+ 20852 multiletter control sequences out of 15000+200000
+ 417699 words of font info for 39 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 68i,8n,74p,272b,230s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Users/shayd/AppData/Local/Prog
+rams/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/shayd/AppData/Local/Prog
+rams/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/shayd/AppData/Local/Prog
+rams/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}<C:/Users/shayd/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/shayd/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/shayd/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/shayd/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/shayd/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/lm/lmsy10.pfb>
+Output written on HW1.pdf (11 pages, 39889304 bytes).
+PDF statistics:
+ 93 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 81 words of extra memory for PDF output out of 10000 (max. 10000000)
+
