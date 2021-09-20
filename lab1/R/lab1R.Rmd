@@ -1,0 +1,23 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+----
+title: "565 Lab 1:"
+author: "Hayden Atchley, Steven Goodsell, Austin Nichalson, Tristan "
+output: pdf_document
+----
+
+```{r echo=FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(pacman, tidyverse, rmarkdown, knitr)
+knitr::opts_chunk$set(message = FALSE, echo = FALSE)
+```
+
+
+
+veh <- read_csv("data/VEH_fixed.csv")
+hh <- read_csv("data/HH_fixed.csv")
+emp <- read_csv("data/EMP_fixed.csv")
+
