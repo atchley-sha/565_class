@@ -66,20 +66,6 @@ tripprod %>%
   align(align = "center", part = "all") %>%
   autofit(add_w = 0, add_h = 0) %>%
   fit_to_width(6.5)
-
-tripprod
-```
-
-I also changed the "income" data type for easier analysis:
-```{r rename_9}
-tripprod$hhfaminc <- as_factor(tripprod$hhfaminc)
-tripprod %>%
-  head(n = 10L) %>%
-  flextable() %>%
-  theme_booktabs() %>%
-  align(align = "center", part = "all") %>%
-  autofit(add_w = 0, add_h = 0) %>%
-  fit_to_width(6.5)
 ```
 
 
