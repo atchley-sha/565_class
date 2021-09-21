@@ -1,0 +1,173 @@
+---
+title: 'Homework 2: Trip Generation'
+author: "Hayden Atchley"
+date: "9/20/2021"
+output:
+  pdf_document:
+    latex_engine: lualatex
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r load_packages, message=FALSE, include=FALSE}
+if(!require(pacman)) install.packages(pacman)
+pacman::p_load(pacman, tidyverse, remotes, knitr, nhts2017, sjlabelled, flextable, jtools)
+options(dplyr.summarise.inform = FALSE)
+set_flextable_defaults(fonts_ignore=TRUE)
+```
+
+Loading the data
+================================================================================
+I followed the instructions provided in the textbook for loading the data. The following is the R code I used, and the output:
+
+```{r load_data, echo=TRUE, message=FALSE, warning=FALSE}
+hh <- nhts_households %>% 
+  # filter to MSA size 2, travel on weekday
+  filter(msasize == "02", !travday %in% c("01", "07")) %>%
+  # select the columns we care about.
+  select(houseid, wthhfin, hhsize, hhvehcnt, numadlt, hhfaminc, wrkcount) %>%
+  mutate(
+    hhsize = ifelse(hhsize > 4, 4, hhsize),
+    hhvehcnt = ifelse(hhvehcnt > 3, 3, hhvehcnt),
+    wrkcount = ifelse(wrkcount > 2, 2, wrkcount)
+  )
+
+trips <- nhts_trips %>% 
+  # filter to households in the data
+  filter(houseid %in% hh$houseid) %>%
+  group_by(houseid, trippurp) %>%
+  # count up how many trips each household took
+  summarise(trips = n()) %>%
+  # "spread" the data, filling zero if no trips were taken
+  pivot_wider(id_cols = houseid, names_from = trippurp, 
+              values_from = trips, values_fill = 0)
+
+# function to change NA to 0
+nato0 <- function(x) {ifelse(is.na(x), 0, x)}
+
+tripprod <- hh %>% 
+  # join tables by id field
+  left_join(trips, by = "houseid") %>%
+  # change all NA values in columns from the trips data to 0
+  mutate_at(vars(names(trips)), nato0)
+
+tripprod %>%
+  head(n = 10L) %>%
+  flextable() %>%
+  theme_booktabs() %>%
+  align(align = "center", part = "all") %>%
+  autofit(add_w = 0, add_h = 0) %>%
+  fit_to_width(6.5)
+
+tripprod
+```
+
+I also changed the "income" data type for easier analysis:
+```{r rename_9}
+tripprod$hhfaminc <- as_factor(tripprod$hhfaminc)
+tripprod %>%
+  head(n = 10L) %>%
+  flextable() %>%
+  theme_booktabs() %>%
+  align(align = "center", part = "all") %>%
+  autofit(add_w = 0, add_h = 0) %>%
+  fit_to_width(6.5)
+```
+
+
+2.1
+================================================================================
+Using this data, we can calculate trip rates by household size and income group:
+```{r hh_size_and_income}
+tripprod <- tripprod %>%
+  group_by(hhsize, hhfaminc) %>%
+  arrange(hhsize, hhfaminc) %>%
+  filter(!hhfaminc %in% c("-7", "-8", "-9"))
+tripprod$hhfaminc <- as_label(tripprod$hhfaminc)
+tripprod %>%
+  summarize(
+    n = n(),
+    HBW = weighted.mean(HBW, wthhfin),
+    HBSHOP = weighted.mean(HBSHOP, wthhfin),
+    HBSOCREC = weighted.mean(HBSOCREC, wthhfin),
+    HBO = weighted.mean(HBO, wthhfin),
+    NHB = weighted.mean(NHB, wthhfin),
+    "\U03A3" = HBW + HBSHOP + HBSOCREC + HBO + NHB
+  ) %>%
+  flextable() %>%
+  theme_booktabs() %>%
+  colformat_double(j = 2:9,digits = 2) %>%
+  align(align = "center", part = "all") %>%
+  autofit(add_w = 0, add_h = 0) %>%
+  fit_to_width(6.5)
+```
+Generally, this data seems to make sense: a larger household size will produce more trips, and a higher income roughly will produce more trips as well. In most of the household sizes, the HBW (and total) trip rates peak somewhere around the $150,000 range, which makes sense as after a certain level of income, possibly fewer trips are needed as more executive positions may be easier to do remotely. The HBSOCREC trips also increase generally with income, which makes sense, though there are quite a few specific numbers that don't follow this trend. Most of these are from groups with small sample sizes however, so the exact numbers may not represent a realistic average.
+
+
+2.2
+================================================================================
+We can use a similar process to calculate trip rates by household workers and vehicles:
+```{r hh_emp_and_veh}
+tripprod %>%
+  group_by(wrkcount, hhvehcnt) %>%
+  arrange(wrkcount, hhvehcnt) %>%
+  summarize(
+    n = n(),
+    HBW = weighted.mean(HBW, wthhfin),
+    HBSHOP = weighted.mean(HBSHOP, wthhfin),
+    HBSOCREC = weighted.mean(HBSOCREC, wthhfin),
+    HBO = weighted.mean(HBO, wthhfin),
+    NHB = weighted.mean(NHB, wthhfin),
+    "\U03A3" = HBW + HBSHOP + HBSOCREC + HBO + NHB
+  ) %>%
+  flextable() %>%
+  theme_booktabs() %>%
+  colformat_double(j = 3:9,digits = 2) %>%
+  align(align = "center", part = "all") %>%
+  autofit(add_w = 0, add_h = 0) %>%
+  fit_to_width(6.5)
+```
+This data also roughly makes sense, as trips go up with number of workers and number of vehicles. However, there are some unexpected data points: as an example, a 2-worker 0-vehicle (2W0V) household makes almost twice as many HBW trips as a 2W1V household. I can think of two things that might contribute to this though: the very small number of observations for the 2W0V category (which can introduce statistical error), and that with a car it is much more likely for workers to stop at a different activity on their way to or from work than if they were relying on transit or walking/biking. Overall, the data seems to be mostly good, but may require some tweaking to achieve more realistic numbers.
+
+
+2.3
+================================================================================
+We can calculate the standard deviation in trip rates by household size/vehicle count and number of workers/vehicle count:
+```{r sd_veh_and_size_and_emp}
+size <- tripprod %>%
+  group_by(hhsize, hhvehcnt) %>%
+  arrange(hhsize, hhvehcnt) %>%
+  summarise(HBW = wtd.sd(HBW, wthhfin)) %>%
+  pivot_wider(names_from = hhsize, values_from = HBW)
+emp <- tripprod %>%
+  group_by(wrkcount, hhvehcnt) %>%
+  arrange(wrkcount, hhvehcnt) %>%
+  summarise(HBW = wtd.sd(HBW, wthhfin)) %>%
+  pivot_wider(names_from = wrkcount, values_from = HBW)
+
+left_join(size, emp, by = "hhvehcnt") %>%
+  flextable() %>%
+  delete_part(part = "header") %>%
+  add_header(hhvehcnt = "Household Vehicles",
+             `1.x` = "1", `2.x` = "2", `3` = "3", `4` = "4",
+             `0` = "0", `1.y` = "1", `2.y` = "2") %>%
+  add_header(hhvehcnt = "",
+             `1.x` = "Size", `2.x` = "Size", `3` = "Size", `4` = "Size",
+             `0` = "Workers", `1.y` = "Workers", `2.y` = "Workers" ) %>%
+  merge_h(part = "header") %>%
+  theme_booktabs() %>%
+  colformat_double(j = 2:8, digits = 2) %>%
+  align(align = "center", part = "all") %>%
+  autofit(add_w = 0, add_h = 0) %>%
+  vline(j = c("hhvehcnt", "4")) %>%
+  set_caption("Weighted standard deviations of HBW trips by HH size/vehicles and HH workers/vehicles")
+```
+
