@@ -226,3 +226,26 @@ NHBlm <- lm(data = psrc_attractions, NHB ~ retl + offi + gved)
 summary(NHBlm)
 ```
 
+
+
+2.6
+================================================================================
+Most of these trip attraction models seem to be reasonable: work trips correlate with employment, shopping with retail, etc. NHB trips correlate with certain types of employment and retail, suggesting that office and government employees are likely to go shopping right after work. Manufacturing jobs didn't correlate well with NHB trips though, and I would suspect this has to do with income (manufacturing jobs can often pay less than office jobs), though there may be other factors as well.
+
+None of the \(R^2\) values are particularly good, but the HBW model has a decent \(R^2\) of \(0.44\). The only significant variable that HBW trips correlated well with was total employment, which makes sense and would largely explain the relatively high \(R^2\) value.
+
+
+2.7
+================================================================================
+Here are the models with the intercept removed:
+```{r attr_models_no_int}
+HBWlmNI <- lm(data = psrc_attractions, HBW ~ totemp - 1)
+summary(HBWlmNI)
+HBShoplmNI <- lm(data = psrc_attractions, HBShop ~ retl - 1)
+summary(HBShoplmNI)
+HBOlmNI <- lm(data = psrc_attractions, HBO ~ tothh + retl - 1)
+summary(HBOlmNI)
+NHBlmNI <- lm(data = psrc_attractions, NHB ~ retl + offi + gved - 1)
+summary(NHBlmNI)
+```
+All of the \(R^2\) values increased with the intercept removed, but this is misleading, as the \(R^2\) value is now comparing against a random guess for the trip rates rather than against the average trip rates. Basically these \(R^2\) values are meaningless, and we should definitely keep the intercept in. However, it may be wise to use a piecewise linear model in order to account for the fact that sparse TAZs would attract close to zero trips, rather than the intercept's number of trips. However, that is outside the scope of the assignment, so will not be done here.
