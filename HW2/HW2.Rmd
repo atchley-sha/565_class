@@ -1,7 +1,7 @@
 ---
 title: 'Homework 2: Trip Generation'
 author: "Hayden Atchley"
-date: "9/20/2021"
+date: "9/22/2021"
 output:
   pdf_document:
     latex_engine: lualatex
@@ -19,7 +19,9 @@ knitr::opts_chunk$set(
 
 ```{r load_packages, message=FALSE, include=FALSE}
 if(!require(pacman)) install.packages(pacman)
-pacman::p_load(pacman, tidyverse, remotes, knitr, nhts2017, sjlabelled, flextable, jtools)
+pacman::p_load(pacman, tidyverse, remotes, knitr, sjlabelled, flextable, jtools)
+remotes::install_github("byu-transpolab/nhts2017")
+p_load(nhts2017)
 options(dplyr.summarise.inform = FALSE)
 set_flextable_defaults(fonts_ignore=TRUE)
 ```
@@ -59,6 +61,7 @@ tripprod <- hh %>%
   # change all NA values in columns from the trips data to 0
   mutate_at(vars(names(trips)), nato0)
 
+# Format table
 tripprod %>%
   head(n = 10L) %>%
   flextable() %>%
@@ -73,12 +76,12 @@ tripprod %>%
 ================================================================================
 Using this data, we can calculate trip rates by household size and income group:
 ```{r hh_size_and_income}
-tripprod$hhfaminc <- as_factor(tripprod$hhfaminc)
+tripprod$hhfaminc <- as_factor(tripprod$hhfaminc) #better data type for manipulation
 tripprod <- tripprod %>%
   filter(!hhfaminc %in% c("-7", "-8", "-9")) %>%
   group_by(hhsize, hhfaminc) %>%
   arrange(hhsize, hhfaminc)
-tripprod$hhfaminc <- as_label(tripprod$hhfaminc)
+tripprod$hhfaminc <- as_label(tripprod$hhfaminc) #to show text instead of numbers
 
 tripprod %>%
   summarize(
@@ -90,6 +93,7 @@ tripprod %>%
     NHB = weighted.mean(NHB, wthhfin),
     "\U03A3" = HBW + HBSHOP + HBSOCREC + HBO + NHB
   ) %>%
+  #Create table
   flextable() %>%
   theme_booktabs() %>%
   colformat_double(j = 2:9,digits = 2) %>%
