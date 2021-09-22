@@ -29,6 +29,7 @@ set_flextable_defaults(fonts_ignore=TRUE)
 Loading the data
 ================================================================================
 I followed the instructions provided in the textbook for loading the data. The following is the R code I used, and the output:
+\bigskip
 
 ```{r load_data, echo=TRUE, message=FALSE, warning=FALSE}
 hh <- nhts_households %>% 
@@ -68,7 +69,7 @@ tripprod %>%
   theme_booktabs() %>%
   align(align = "center", part = "all") %>%
   autofit(add_w = 0, add_h = 0) %>%
-  fit_to_width(6.5)
+  fit_to_width(6)
 ```
 
 
@@ -99,7 +100,7 @@ tripprod %>%
   colformat_double(j = 2:9,digits = 2) %>%
   align(align = "center", part = "all") %>%
   autofit(add_w = 0, add_h = 0) %>%
-  fit_to_width(6.5) %>%
+  fit_to_width(6) %>%
   hline(i = seq(11, 44, 11))
 ```
 Generally, this data seems to make sense: a larger household size will produce more trips, and a higher income roughly will produce more trips as well. In most of the household sizes, the HBW (and total) trip rates peak somewhere around the $150,000 range, which makes sense as after a certain level of income, possibly fewer trips are needed as more executive positions may be easier to do remotely. The HBSOCREC trips also increase generally with income, which makes sense, though there are quite a few specific numbers that don't follow this trend. Most of these are from groups with small sample sizes however, so the exact numbers may not represent a realistic average.
@@ -126,7 +127,7 @@ tripprod %>%
   colformat_double(j = 3:9,digits = 2) %>%
   align(align = "center", part = "all") %>%
   autofit(add_w = 0, add_h = 0) %>%
-  fit_to_width(6.5)
+  fit_to_width(6)
 ```
 This data also roughly makes sense, as trips go up with number of workers and number of vehicles. However, there are some unexpected data points: as an example, a 2-worker 0-vehicle (2W0V) household makes almost twice as many HBW trips as a 2W1V household. I can think of two things that might contribute to this though: the very small number of observations for the 2W0V category (which can introduce statistical error), and that with a car it is much more likely for workers to stop at a different activity on their way to or from work than if they were relying on transit or walking/biking. Overall, the data seems to be mostly good, but may require some tweaking to achieve more realistic numbers.
 
