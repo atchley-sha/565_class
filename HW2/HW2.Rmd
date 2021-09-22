@@ -73,11 +73,13 @@ tripprod %>%
 ================================================================================
 Using this data, we can calculate trip rates by household size and income group:
 ```{r hh_size_and_income}
+tripprod$hhfaminc <- as_factor(tripprod$hhfaminc)
 tripprod <- tripprod %>%
+  filter(!hhfaminc %in% c("-7", "-8", "-9")) %>%
   group_by(hhsize, hhfaminc) %>%
-  arrange(hhsize, hhfaminc) %>%
-  filter(!hhfaminc %in% c("-7", "-8", "-9"))
+  arrange(hhsize, hhfaminc)
 tripprod$hhfaminc <- as_label(tripprod$hhfaminc)
+
 tripprod %>%
   summarize(
     n = n(),
@@ -93,7 +95,8 @@ tripprod %>%
   colformat_double(j = 2:9,digits = 2) %>%
   align(align = "center", part = "all") %>%
   autofit(add_w = 0, add_h = 0) %>%
-  fit_to_width(6.5)
+  fit_to_width(6.5) %>%
+  hline(i = seq(11, 44, 11))
 ```
 Generally, this data seems to make sense: a larger household size will produce more trips, and a higher income roughly will produce more trips as well. In most of the household sizes, the HBW (and total) trip rates peak somewhere around the $150,000 range, which makes sense as after a certain level of income, possibly fewer trips are needed as more executive positions may be easier to do remotely. The HBSOCREC trips also increase generally with income, which makes sense, though there are quite a few specific numbers that don't follow this trend. Most of these are from groups with small sample sizes however, so the exact numbers may not represent a realistic average.
 
@@ -127,6 +130,26 @@ This data also roughly makes sense, as trips go up with number of workers and nu
 2.3
 ================================================================================
 We can calculate the standard deviation in trip rates by household size/vehicle count and number of workers/vehicle count:
+```{r table_format, include=FALSE}
+#Write formatting function to avoid clutter
+format_my_table <- function(.data) {
+  flextable(.data) %>%
+  delete_part(part = "header") %>%
+  add_header(hhvehcnt = "Household Vehicles",
+             `1.x` = "1", `2.x` = "2", `3` = "3", `4` = "4",
+             `0` = "0", `1.y` = "1", `2.y` = "2") %>%
+  add_header(hhvehcnt = "",
+             `1.x` = "Size", `2.x` = "Size", `3` = "Size", `4` = "Size",
+             `0` = "Workers", `1.y` = "Workers", `2.y` = "Workers" ) %>%
+  merge_h(part = "header") %>%
+  theme_booktabs() %>%
+  colformat_double(j = 2:8, digits = 2) %>%
+  align(align = "center", part = "all") %>%
+  autofit(add_w = 0, add_h = 0) %>%
+  vline(j = c("hhvehcnt", "4"))
+}
+```
+
 ```{r sd_veh_and_size_and_emp}
 size <- tripprod %>%
   group_by(hhsize, hhvehcnt) %>%
@@ -140,20 +163,47 @@ emp <- tripprod %>%
   pivot_wider(names_from = wrkcount, values_from = HBW)
 
 left_join(size, emp, by = "hhvehcnt") %>%
-  flextable() %>%
-  delete_part(part = "header") %>%
-  add_header(hhvehcnt = "Household Vehicles",
-             `1.x` = "1", `2.x` = "2", `3` = "3", `4` = "4",
-             `0` = "0", `1.y` = "1", `2.y` = "2") %>%
-  add_header(hhvehcnt = "",
-             `1.x` = "Size", `2.x` = "Size", `3` = "Size", `4` = "Size",
-             `0` = "Workers", `1.y` = "Workers", `2.y` = "Workers" ) %>%
-  merge_h(part = "header") %>%
-  theme_booktabs() %>%
-  colformat_double(j = 2:8, digits = 2) %>%
-  align(align = "center", part = "all") %>%
-  autofit(add_w = 0, add_h = 0) %>%
-  vline(j = c("hhvehcnt", "4")) %>%
-  set_caption("Weighted standard deviations of HBW trips by HH size/vehicles and HH workers/vehicles")
+  format_my_table() %>%  #Custom function to avoid clutter
+  set_caption("Weighted standard deviations of HBW trips",
+              autonum = F)
 ```
+Some of these standard deviations are quite small relative to the trip rate, but a lot are fairly large, and many even exceed the trip rate itself. This is somewhat to be expected though, given the small sample size of many of the categories (see Problem 2.4). For estimating work trips, it may make sense to use the number of workers rather than the household size, but since all other trip types are estimated based on household size, it would be practical to do the same for work trips. Both household size and worker count seem to correlate well enough that it shouldn't make a drastic difference in the model.
+
+
+2.4
+================================================================================
+We can use a similar process to find the number of trips in each category:
+```{r n_veh_and_size_and_emp}
+size <- tripprod %>%
+  group_by(hhsize, hhvehcnt) %>%
+  arrange(hhsize, hhvehcnt) %>%
+  summarise(n = n()) %>%
+  pivot_wider(names_from = hhsize, values_from = n)
+emp <- tripprod %>%
+  group_by(wrkcount, hhvehcnt) %>%
+  arrange(wrkcount, hhvehcnt) %>%
+  summarise(n = n()) %>%
+  pivot_wider(names_from = wrkcount, values_from = n)
+
+left_join(size, emp, by = "hhvehcnt") %>%
+  format_my_table() %>%  #Custom function to avoid clutter
+  set_caption("Number of households in each classification",
+              autonum = F)
+```
+Clearly some of the household types have very few observations, which (at least partly) explains why many of the data points in the previous problems don't always make sense. For example, there are 8 0-vehicle/2-worker households out of the thousands of total households, which is not at all a large enough sample size to generate any meaningful trip rates. However, trip rates for these households can likely be estimated to somewhat realistic values using the rest of the data, and in fact may already represent realistic values, even if the confidence intervals are quite wide.
+
+
+2.5
+================================================================================
+In order to create trip attraction models, first we need to download the PSRC data with trip attractions and other useful variables by tract:
+```{r trip_attr}
+psrc_attractions <- read_csv("https://byu.box.com/shared/static/7ci8vomip719bdno7xl5ftjj940dausm.csv")
+```
+Now we can estimate models for trip attraction based on these variables:
+```{r attr_models_prelim}
+lm(data = psrc_attractions, HBW ~ tothh + retl + manu + offi + gved + othr + totemp) %>%
+  summary()
+lm(data = psrc_attractions, HBW ~ totemp) %>% plot()
+```
+
 
