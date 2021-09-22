@@ -105,6 +105,7 @@ tripprod %>%
 ```
 Generally, this data seems to make sense: a larger household size will produce more trips, and a higher income roughly will produce more trips as well. In most of the household sizes, the HBW (and total) trip rates peak somewhere around the $150,000 range, which makes sense as after a certain level of income, possibly fewer trips are needed as more executive positions may be easier to do remotely. The HBSOCREC trips also increase generally with income, which makes sense, though there are quite a few specific numbers that don't follow this trend. Most of these are from groups with small sample sizes however, so the exact numbers may not represent a realistic average.
 
+\pagebreak
 
 2.2
 ================================================================================
@@ -202,13 +203,26 @@ Clearly some of the household types have very few observations, which (at least 
 ================================================================================
 In order to create trip attraction models, first we need to download the PSRC data with trip attractions and other useful variables by tract:
 ```{r trip_attr}
-psrc_attractions <- read_csv("https://byu.box.com/shared/static/7ci8vomip719bdno7xl5ftjj940dausm.csv")
+psrc_attractions <- read_csv(
+  "https://byu.box.com/shared/static/7ci8vomip719bdno7xl5ftjj940dausm.csv"
+  )
 ```
 Now we can estimate models for trip attraction based on these variables:
 ```{r attr_models_prelim}
 lm(data = psrc_attractions, HBW ~ tothh + retl + manu + offi + gved + othr + totemp) %>%
   summary()
-lm(data = psrc_attractions, HBW ~ totemp) %>% plot()
 ```
+Looking at these estimates presents a few immediate problems: for one, the coefficients for retail and manufacturing jobs are negative, and the intercept is very low as well, implying a TAZ with no jobs or households would attract -1768 trips. I also included total employment as well as each employment type variable, which doesn't make too much sense.
 
+After some experimentation, these are the models I settled on:
+```{r attr_models}
+HBWlm <- lm(data = psrc_attractions, HBW ~ totemp)
+summary(HBWlm)
+HBShoplm <- lm(data = psrc_attractions, HBShop ~ retl)
+summary(HBShoplm)
+HBOlm <- lm(data = psrc_attractions, HBO ~ tothh + retl)
+summary(HBOlm)
+NHBlm <- lm(data = psrc_attractions, NHB ~ retl + offi + gved)
+summary(NHBlm)
+```
 
