@@ -84,41 +84,48 @@ my_flextable <- function(tibble){
 ###
 
 #For HBW
-tripprod %>%
+HBW <- tripprod %>%
   group_by(wrkcount, hhvehcnt) %>%
   summarize(
     HBW = weighted.mean(HBW, wthhfin)
    ) %>%
   mutate(hhvehcnt = paste(hhvehcnt, "vehicles")) %>%
   pivot_wider(names_from = hhvehcnt, values_from = HBW) %>%
-  round(digits = 3) %>%
+  round(digits = 3)
+HBW %>%
   my_flextable() %>%
   add_header_lines("HBW")
 
 #For HBSHOP
-tripprod %>%
+HBSHOP <- tripprod %>%
   group_by(hhsize, hhvehcnt) %>%
   summarize(
     HBSHOP = weighted.mean(HBSHOP, wthhfin)
    ) %>%
   mutate(hhvehcnt = paste(hhvehcnt, "vehicles")) %>%
   pivot_wider(names_from = hhvehcnt, values_from = HBSHOP) %>%
-  round(digits = 3) %>%
+  round(digits = 3)
+HBSHOP %>%
   my_flextable() %>%
   add_header_lines("HBSHOP")
 
 #For HBO
-tripprod %>%
+HBO <- tripprod %>%
   group_by(hhsize, hhvehcnt) %>%
   summarize(
     HBO = weighted.mean(HBO, wthhfin)
    ) %>%
   mutate(hhvehcnt = paste(hhvehcnt, "vehicles")) %>%
   pivot_wider(names_from = hhvehcnt, values_from = HBO) %>%
-  round(digits = 3) %>%
+  round(digits = 3)
+HBO %>%
   my_flextable() %>%
   add_header_lines("HBO")
 ```
+
+\pagebreak
+Note that there are some data points that seem to not make sense, for example a 3-person, 0-vehicle household makes more HBO and HBSHOP trips than a 4-person, 0-vehicle household. We had to adjust some of these trip rates to account for that intuition. Our new tables are presented below:
+
 
 We also calculated the 95% confidence intervals for each trip type, in case we need to adjust them later:
 ```{r sample_se, echo=TRUE}
@@ -173,5 +180,31 @@ tripprod %>%
   add_header_lines("HBO Confidence Intervals")
 ```
 
-We then wrote these tables to their respective .dbf files and ran the Trip Generation submodel in Cube. Ideally, the total output trips would be somewhat close to the NHTS reported total weighted trips for the area.
+We then wrote these tables to their respective .dbf files and ran the Trip Generation submodel in Cube. Ideally, the total output trips would be somewhat close to the NHTS reported total weighted trips for the area:
 
+```{=latex NHTS_table}
+\begin{tabular}[c c]
+\textbf{Purpose} & \textbf{Weighted Survey Trips}\\
+HBW & \(118,653\)\\
+HBO & \(267,987\)\\
+HBSHOP & \(129,614\)
+\end{tabular}
+```
+
+After our first run, these are the results we got:
+
+```{r hhprod1}
+read.dbf("dbf/HH_PROD1.dbf") %>% head()
+```
+
+Adding up each trip by purpose gives us:
+```{r sum1}
+read.dbf("dbf/HH_PROD1.dbf")[,-1] %>% colSums()
+```
+
+These are obviously not very close to the targets, so we need to do some adjusting. We began by adjusting the rates with the largest confidence intervals first, and these are the results we got:
+
+```{r hhprod2}
+read.dbf("dbf/HH_PROD2.dbf") %>% head()
+read.dbf("dbf/HH_PROD2.dbf")[,-1] %>% colSums()
+```
