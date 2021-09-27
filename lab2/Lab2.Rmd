@@ -1,9 +1,13 @@
 ---
 title: 'Lab 2: Trip Production'
+author: "Hayden Atchley, Tristan Parker, Steven Goodsell, Austin Nichalson"
 date: "9/27/2021"
+geometry: margin=1in
 output:
   pdf_document:
     latex_engine: lualatex
+    includes:
+      in_header: "preamble.tex"
 editor_options: 
   chunk_output_type: console
 ---
@@ -36,11 +40,11 @@ options(dplyr.summarise.inform = FALSE)
 set_flextable_defaults(fonts_ignore=TRUE)
 ```
 
+\raggedright
 
 Trip Production Rates
 =================================
 Many of the original trip production rates provided in the Cube scenario are set at 1 across the board, regardless of purpose, number of vehicles, etc. This is obviously not realistic, so we need to use different data. We used the data from the NHTS 2017 report, which we worked with in HW #2 as well. The data manipulation required to get these values is very similar to that from HW #2, so we present just the results here:
-
 ```{r load_data, echo=FALSE}
 hh <- nhts_households %>%
   # filter to MSA size 2, travel on weekday
@@ -124,9 +128,6 @@ HBO %>%
 ```
 
 \pagebreak
-Note that there are some data points that seem to not make sense, for example a 3-person, 0-vehicle household makes more HBO and HBSHOP trips than a 4-person, 0-vehicle household. We had to adjust some of these trip rates to account for that intuition. Our new tables are presented below:
-
-
 We also calculated the 95% confidence intervals for each trip type, in case we need to adjust them later:
 ```{r sample_se, echo=TRUE}
 #For HBW
@@ -142,10 +143,10 @@ tripprod %>%
     hhvehcnt = paste(hhvehcnt, "vehicles")
     ) %>%
   pivot_wider(id_cols = wrkcount, names_from = hhvehcnt, values_from = conf_sci) %>%
-  my_flextable() %>%
+  my_flextable() %>% #for formatting
   add_header_lines("HBW Confidence Intervals")
 ```
-(Note the code is virtually same for the other purposes)
+(The code is virtually the same for the other purposes)
 ```{r se, echo=FALSE}
 #For HBSHOP
 tripprod %>%
@@ -180,31 +181,57 @@ tripprod %>%
   add_header_lines("HBO Confidence Intervals")
 ```
 
-We then wrote these tables to their respective .dbf files and ran the Trip Generation submodel in Cube. Ideally, the total output trips would be somewhat close to the NHTS reported total weighted trips for the area:
+\pagebreak
+Note that there are some data points that seem to not make sense, for example a 3-person, 0-vehicle household makes more HBO and HBSHOP trips than a 4-person, 0-vehicle household, which should not be the case. We had to adjust some of these trip rates to account for that intuition. Our new tables are presented below: \bigskip
+```{r fix_tables, echo=FALSE}
+HBW[1,] <- as.list(rep.int(0, times = 5))
+HBW %>%
+  my_flextable() %>%
+  add_header_lines("HBW")
 
-```{=latex NHTS_table}
-\begin{tabular}[c c]
-\textbf{Purpose} & \textbf{Weighted Survey Trips}\\
+HBSHOP[1,3:5] <- as.list(rep.int(.874, times = 3))
+HBSHOP[2:4,2] <- rep.int(2, times = 3)
+HBSHOP[2,5] <- 1.781
+HBSHOP[3,3:4] <- list(1.8,1.8)
+HBSHOP[4,5] <- 1.84
+HBSHOP %>%
+  my_flextable() %>%
+  add_header_lines("HBSHOP")
+
+HBO[1,3:5] <- list(.558,.558,.558)
+HBO[3,2] <- 3
+HBO %>%
+  my_flextable() %>%
+  add_header_lines("HBO")
+```
+
+\bigskip
+We then wrote these tables to their respective .dbf files and ran the Trip Generation submodel in Cube. Ideally, the total output trips would be somewhat close to the NHTS reported total weighted trips for the area:
+```{=latex}
+\begin{center}
+\begin{tabular}{l  r}
+\textbf{Purpose} \quad & \quad \textbf{Weighted Survey Trips}\\
+\hline
 HBW & \(118,653\)\\
 HBO & \(267,987\)\\
-HBSHOP & \(129,614\)
+HBSHOP & \(129,614\)\\
+\hline
 \end{tabular}
+\end{center}
 ```
 
+\pagebreak
 After our first run, these are the results we got:
-
 ```{r hhprod1}
-read.dbf("dbf/HH_PROD1.dbf") %>% head()
+read.dbf("dbf/HH_PROD1.dbf") %>% round(digits = 2) %>% head()
 ```
-
 Adding up each trip by purpose gives us:
 ```{r sum1}
-read.dbf("dbf/HH_PROD1.dbf")[,-1] %>% colSums()
+read.dbf("dbf/HH_PROD1.dbf")[,c(2,4,6)] %>% colSums() %>% round(digits = 0)
 ```
 
 These are obviously not very close to the targets, so we need to do some adjusting. We began by adjusting the rates with the largest confidence intervals first, and these are the results we got:
-
-```{r hhprod2}
-read.dbf("dbf/HH_PROD2.dbf") %>% head()
-read.dbf("dbf/HH_PROD2.dbf")[,-1] %>% colSums()
-```
+# ```{r hhprod2}
+# read.dbf("dbf/HH_PROD2.dbf") %>% round(digits = 2) %>% head()
+# read.dbf("dbf/HH_PROD2.dbf")[,-1] %>% colSums() %>% round(digits = 0)
+# ```
