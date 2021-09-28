@@ -14,13 +14,13 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	message = FALSE,
 	warning = FALSE
 )
 ```
 
-```{r load_packages}
+```{r load_packages, include=FALSE}
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
   pacman,
@@ -28,5 +28,118 @@ pacman::p_load(
   flextable,
   knitr
   )
+```
+
+```{r functions, include=FALSE}
+my_flextable <- function(tibble){
+  flextable(tibble) %>%
+  autofit() %>%
+  align(align = "center", part = "all")
+}
+```
+
+\raggedright
+
+3.1
+====================
+In this problem we are developing a gravity trip distribution model of the form
+```{=latex}
+\[
+T_{ij} = \frac{P_i A_j^* (t_{ij})^{-b}}{\sum_{j' \in J} A_{j'}^* (t_{ij'})^{-b}} .
+\]
+```
+Much of the code required to do so was provided in the problem statement; it is provided below:
+```{r grav_model, echo=TRUE}
+#' Gravity Model
+#' @param p vector of productions, length n
+#' @param A vector of attractions, lenth n
+#' @param C matrix of impedances, dim n x n
+#' @param b impedance parameter
+gravity <- function(p, a, C, b){
+  # output matrix (all 0 here)
+  trips <- matrix(0, nrow = length(p), ncol = length(a)) 
+  # loop over all rows (production)
+  for (i in 1:length(p)) {
+    bottomA <- sum(a * C[i, ]^(-b)) # denominator
+    
+    # loop over all columns (attraction)
+    for (j in 1:length(a)) {
+      # calculate gravity model for trips from i to j
+      topA <- a[j] * C[i,j]^(-b)
+      trips[i, j] <-  p[i] * topA / bottomA
+    }
+  }
+  
+  return(trips)
+}
+```
+\pagebreak
+```{r balance_model, echo=TRUE}
+#' Function to balance gravity model
+#' @param p vector of productions, length n
+#' @param A vector of attractions, length n
+#' @param C matrix of impedances, dim n x n
+#' @param b impedance parameter
+#' @param tolerance Acceptable change in trips matrix
+balance_gravity <- function(p, a, C, b, tolerance) {
+  
+  # define starting values
+  k <- 0 #iteration counter
+  astar <- a # starting unadjusted attractions
+  trips0 <- matrix(0, nrow = length(p), ncol = length(a)) #initial T is 0's
+  error <- Inf # first time through, error is Infinite
+   
+  # loop through algorithm
+  while(error > tolerance){
+    # compute gravity model with adjusted attractions, using your function
+    trips <- gravity(p, astar, C, b) 
+    
+    # calculate the error as the change in trips in successive iterations
+    error <- sum(abs(trips - trips0))
+    
+    # protect against infinite loops, increment values
+    if (k > 100) break # maximum of 100 iterations
+    k <- k + 1
+    trips0 <- trips
+    astar <- astar * a / colSums(trips) # next iteration astar
+  }
+  
+  return(trips)
+}
+```
+We also were given a 3-zone system with its respective production/attraction rates and costs:
+```{r system, echo=TRUE}
+prod <- c(100, 200, 100)
+attr <- c(200, 50, 150)
+costs <- matrix(c(2, 5, 4,
+                  5, 2, 3,
+                  4, 3, 2),
+                byrow = T,
+                nrow = 3)
+```
+Using this balanced gravity model and the provided system, we can calculate the trip distribution:
+```{r dist1, echo=TRUE}
+dist1 <- balance_gravity(a = attr, p = prod, C = costs, b = 0.5, tolerance = 0.01)
+dist1
+```
+\pagebreak
+If we check the row and column sums, we find that they match our production and attraction vectors:
+```{r proof_sums, echo=TRUE}
+rowSums(dist1)
+colSums(dist1)
+```
+
+
+3.2
+==============================
+Now we need to calibrate the model to match the observed trip matrix:
+```{r obs_trips, echo=FALSE}
+obs <- tibble(c(1, 2, 3),
+       c(80, 80, 40),
+       c(5, 40, 5),
+       c(15, 80, 55),
+       )
+colnames(obs) <- c("i \\ j", "1", "2", "3")
+my_flextable(obs)
 ```
 

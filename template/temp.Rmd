@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r load_packages}
+```{r load_packages, include=FALSE}
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
   pacman,
@@ -28,5 +28,13 @@ pacman::p_load(
   flextable,
   knitr
   )
+```
+
+```{r functions, include=FALSE}
+my_flextable <- function(tibble){
+  flextable(tibble) %>%
+  autofit() %>%
+  align(align = "center", part = "all")
+}
 ```
 
