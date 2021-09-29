@@ -73,7 +73,7 @@ gravity <- function(p, a, C, b){
   return(trips)
 }
 ```
-\pagebreak
+
 ```{r balance_model, echo=TRUE}
 #' Function to balance gravity model
 #' @param p vector of productions, length n
@@ -117,7 +117,7 @@ costs <- matrix(c(2, 5, 4,
                 byrow = T,
                 nrow = 3)
 ```
-\pagebreak
+
 Using this balanced gravity model and the provided system, we can calculate the trip distribution:
 ```{r dist1, echo=TRUE}
 dist1 <- balance_gravity(a = attr, p = prod, C = costs, b = 0.5, tolerance = 0.01)
@@ -129,6 +129,7 @@ rowSums(dist1)
 colSums(dist1)
 ```
 
+\pagebreak
 
 3.2
 ==============================
@@ -171,8 +172,10 @@ balance_gravity(prod, attr, costs, b, tolerance = 0.01) %>%
   `colnames<-`(c(" ", "1", "2", "3")) %>%
   my_flextable() %>%
   vline(j = 1) %>%
+  width(j = 1, 1) %>%
   add_header_lines("Calibrated Model Trip Distribution")
 ```
+\pagebreak
 And to show the absolute errors:
 ```{r calibrated_error, echo=TRUE}
 balance_gravity(prod, attr, costs, b, tolerance = 0.01) - obs
@@ -200,4 +203,4 @@ balance_gravity(prod, attr, costs_new, b, tolerance = 0.01) %>%
   vline(j = 1) %>%
   add_header_lines("New Model Trip Distribution")
 ```
-The response seems to be reasonable: the trips between zone 1 and 2 increased somewhat, and most other trip rates decreased. Interestingly though, the model predicts more trips from zone 1 to zone 3 and more trips that stay within zone 3. I'm not sure exactly why this is, but it may have something to do with the relative proportions of the elements in the cost matrix. These oddities could also potentially make sense in reality: if it's easier to travel between zones 1 and 2, more people will choose to do so, which could make travel to zone 3
+The response seems to be reasonable: the trips between zone 1 and 2 increased somewhat, and most other trip rates decreased. Interestingly though, the model predicts more trips from zone 1 to zone 3 and more trips that stay within zone 3. I'm not sure exactly why this is, but it may have something to do with the relative proportions of the elements in the cost matrix. These oddities could also potentially make sense in reality: if it's easier to travel between zones 1 and 2, more people will choose to do so, which could make travel to zone 3 easier as well, as travel would be less congested. However, it may be best to recalibrate the model, which would require a new observed trip matrix.
