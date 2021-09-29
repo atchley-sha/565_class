@@ -117,12 +117,12 @@ costs <- matrix(c(2, 5, 4,
                 byrow = T,
                 nrow = 3)
 ```
+\pagebreak
 Using this balanced gravity model and the provided system, we can calculate the trip distribution:
 ```{r dist1, echo=TRUE}
 dist1 <- balance_gravity(a = attr, p = prod, C = costs, b = 0.5, tolerance = 0.01)
 dist1
 ```
-\pagebreak
 If we check the row and column sums, we find that they match our production and attraction vectors:
 ```{r proof_sums, echo=TRUE}
 rowSums(dist1)
@@ -134,12 +134,43 @@ colSums(dist1)
 ==============================
 Now we need to calibrate the model to match the observed trip matrix:
 ```{r obs_trips, echo=FALSE}
-obs <- tibble(c(1, 2, 3),
+tibble(c(1, 2, 3),
        c(80, 80, 40),
        c(5, 40, 5),
        c(15, 80, 55),
-       )
-colnames(obs) <- c("i \\ j", "1", "2", "3")
-my_flextable(obs)
+       ) %>%
+  `colnames<-`(c("i -> j", "1", "2", "3")) %>%
+  my_flextable() %>%
+  vline(j = 1) %>%
+  add_header_lines("Observed Trips")
+```
+
+The only variable in the model that can be adjusted is \(b\), the "impedance parameter", i.e. how much the trip cost affects trip distribution. I decided to use root mean squared error as the measure of how well the model matches, and wrote the following code to find the optimal value of \(b\):
+```{r calibration, echo=TRUE}
+obs <- matrix(c(80, 5, 15,
+              80, 40, 80,
+              40, 5, 55),
+              byrow = T,
+              nrow = 3)
+optB <- function(b){
+  (balance_gravity(prod, attr, costs, b, tolerance = 0.01) - obs)^2 %>%
+    sum() %>%
+    "*"(1/(nrow(obs)*ncol(obs))) %>%
+    sqrt()
+}
+
+b <- optimize(optB, lower = -1, upper = 5)$minimum
+b
+```
+Now to use that value in the model:
+```{r calibrated, echo=TRUE}
+balance_gravity(prod, attr, costs, b, tolerance = 0.01) %>%
+  round(digits = 1) %>%
+  as_tibble() %>%
+  add_column(c(1,2,3), .before = 1) %>%
+  `colnames<-`(c("i -> j", "1", "2", "3")) %>%
+  my_flextable() %>%
+  vline(j = 1) %>%
+  add_header_lines("Calibrated Model Trip Distribution")
 ```
 
