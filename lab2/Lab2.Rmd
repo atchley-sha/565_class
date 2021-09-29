@@ -42,6 +42,8 @@ set_flextable_defaults(fonts_ignore=TRUE)
 
 \raggedright
 
+A large part of Urban Transportation Planning is taking the collected socioeconomic data and transforming it into trips that people make everyday. We do this by breaking up the trips into two components; an origin and a destination. Next, we are able to categorize these trips in our trip generation models by grouping them into distinct trip purposes. Trip purposes allow us to better comprehend where trips are produced from and what attracted them as well. The following are key examples of everyday trip purposes: Home-Based-Work (HBW), Home-Based-School (School), Home-Based-Other (Other), Home-Based Shopping/ Recreation (HBShop), etc. For this particular lab, we used this information to calibrate trip generation rates for a given RVTPO model based upon the trip purposes, HBW, HBO and HBShop. The following is a summary of the work we performed that includes analysis and conclusions that were made during this process. 
+
 Trip Production Rates
 =================================
 Many of the original trip production rates provided in the Cube scenario are set at 1 across the board, regardless of purpose, number of vehicles, etc. This is obviously not realistic, so we need to use different data. We used the data from the NHTS 2017 report, which we worked with in HW #2 as well. The data manipulation required to get these values is very similar to that from HW #2, so we present just the results here:
@@ -127,7 +129,7 @@ HBO %>%
   add_header_lines("HBO")
 ```
 
-\pagebreak
+
 We also calculated the 95% confidence intervals for each trip type, in case we need to adjust them later:
 ```{r sample_se, echo=TRUE}
 #For HBW
@@ -138,11 +140,12 @@ tripprod %>%
     HBWsd = wtd.sd(HBW, wthhfin)
    ) %>%
   mutate(
-    conf = 1.96 * HBWsd / n^2,
-    conf_sci = ifelse(conf < 0.001, scientific(conf, digits = 3), round(conf, digits = 3)),
+    conf = paste(
+      "\U00B1",
+      round(1.96 * HBWsd / sqrt(n), digits = 3)),
     hhvehcnt = paste(hhvehcnt, "vehicles")
     ) %>%
-  pivot_wider(id_cols = wrkcount, names_from = hhvehcnt, values_from = conf_sci) %>%
+  pivot_wider(id_cols = wrkcount, names_from = hhvehcnt, values_from = conf) %>%
   my_flextable() %>% #for formatting
   add_header_lines("HBW Confidence Intervals")
 ```
@@ -156,11 +159,12 @@ tripprod %>%
     HBSHOPsd = wtd.sd(HBSHOP, wthhfin)
    ) %>%
   mutate(
-    conf = 1.96 * HBSHOPsd / n^2,
-    conf_sci = ifelse(conf < 0.001, scientific(conf, digits = 3), round(conf, digits = 3)),
+    conf = paste(
+      "\U00B1",
+      round(1.96 * HBSHOPsd / sqrt(n), digits = 3)),
     hhvehcnt = paste(hhvehcnt, "vehicles")
     ) %>%
-  pivot_wider(id_cols = hhsize, names_from = hhvehcnt, values_from = conf_sci) %>%
+  pivot_wider(id_cols = hhsize, names_from = hhvehcnt, values_from = conf) %>%
   my_flextable() %>%
   add_header_lines("HBSHOP Confidence Intervals")
 
@@ -172,16 +176,17 @@ tripprod %>%
     HBOsd = wtd.sd(HBO, wthhfin)
    ) %>%
   mutate(
-    conf = 1.96 * HBOsd / n^2,
-    conf_sci = ifelse(conf < 0.001, scientific(conf, digits = 3), round(conf, digits = 3)),
+    conf = paste(
+      "\U00B1",
+      round(1.96 * HBOsd / sqrt(n), digits = 3)),
     hhvehcnt = paste(hhvehcnt, "vehicles")
     ) %>%
-  pivot_wider(id_cols = hhsize, names_from = hhvehcnt, values_from = conf_sci) %>%
+  pivot_wider(id_cols = hhsize, names_from = hhvehcnt, values_from = conf) %>%
   my_flextable() %>%
   add_header_lines("HBO Confidence Intervals")
 ```
 
-\pagebreak
+
 Note that there are some data points that seem to not make sense, for example a 3-person, 0-vehicle household makes more HBO and HBSHOP trips than a 4-person, 0-vehicle household, which should not be the case. We had to adjust some of these trip rates to account for that intuition. Our new tables are presented below: \bigskip
 ```{r fix_tables, echo=FALSE}
 HBW[1,] <- as.list(rep.int(0, times = 5))
@@ -205,7 +210,7 @@ HBO %>%
   add_header_lines("HBO")
 ```
 
-\bigskip
+\pagebreak
 We then wrote these tables to their respective .dbf files and ran the Trip Generation submodel in Cube. Ideally, the total output trips would be somewhat close to the NHTS reported total weighted trips for the area:
 ```{=latex}
 \begin{center}
@@ -220,18 +225,110 @@ HBSHOP & \(129,614\)\\
 \end{center}
 ```
 
-\pagebreak
+
 After our first run, these are the results we got:
 ```{r hhprod1}
-read.dbf("dbf/HH_PROD1.dbf") %>% round(digits = 2) %>% head()
+read.dbf("dbf/HH_PROD1.DBF") %>% round(digits = 2) %>% head()
 ```
 Adding up each trip by purpose gives us:
 ```{r sum1}
-read.dbf("dbf/HH_PROD1.dbf")[,c(2,4,6)] %>% colSums() %>% round(digits = 0)
+read.dbf("dbf/HH_PROD1.DBF")[,c(2,4,6)] %>% colSums() %>% round(digits = 0)
 ```
 
-These are obviously not very close to the targets, so we need to do some adjusting. We began by adjusting the rates with the largest confidence intervals first, and these are the results we got:
-# ```{r hhprod2}
-# read.dbf("dbf/HH_PROD2.dbf") %>% round(digits = 2) %>% head()
-# read.dbf("dbf/HH_PROD2.dbf")[,-1] %>% colSums() %>% round(digits = 0)
-# ```
+These are obviously not very close to the targets, so we need to do some adjusting. We began by adjusting the rates within their respective confidence intervals (keeping the same "intuition" rules), and these are the results we got:
+```{r hhprod2}
+read.dbf("dbf/HH_PROD2.dbf") %>% round(digits = 2) %>% head()
+read.dbf("dbf/HH_PROD2.dbf")[,c(2,4,6)] %>% colSums() %>% round(digits = 0)
+```
+
+These values are definitely better, but still not quite accurate. However, most of these new trip rates are at the extreme edge of their original confidence interval. As such, we adjusted the new trip rates proportionally so as to match the expected values. Here are the final trip rate tables:
+```{r final_rates, echo=FALSE}
+sums <- read.dbf("dbf/HH_PROD2.dbf")[,c(2,4,6)] %>%
+  colSums() %>% round(digits = 0)
+
+HBW <- tibble(
+  c(0, 1, 2),
+  c(0, 0.32, 2.3),
+  c(0, 0.95, 1.84),
+  c(0, 1.17, 2.2),
+  c(0, 0.97, 2.5)
+)
+colnames(HBW) <- c("wrkcount", "0 vehicles", "1 vehicle", "2 vehicles", "3 vehicles")
+HBW[,-1] <- (HBW[,-1] * 118653 / sums["HBWP"]) %>% round(digits = 3)
+HBW %>%
+  my_flextable() %>%
+  add_header_lines("HBW")
+
+HBO <- tibble(
+  c(1, 2, 3, 4),
+  c(0.5, .68, 3.85, 4.8),
+  c(.6, 1.2, 1.2, 6),
+  c(.6, 1.2, 2.25, 4.7),
+  c(.6, 1.2, 2.1, 4.5)
+)
+colnames(HBO) <- c("hhsize", "0 vehicles", "1 vehicle", "2 vehicles", "3 vehicles")
+HBO[,-1] <- (HBO[,-1] * 267987 / sums["HBOP"]) %>% round(digits = 3)
+HBO %>%
+  my_flextable() %>%
+  add_header_lines("HBO")
+
+HBSHOP <- tibble(
+  c(1, 2, 3, 4),
+  c(.601, 1.4, 1.8, 1.8),
+  c(.874, 1.4, 1.4, 1.6),
+  c(.874, 1.4, 1.4, 1.6),
+  c(.874, 1.6, 1.7, 1.7),
+  .name_repair = "unique"
+)
+colnames(HBSHOP) <- c("hhsize", "0 vehicles", "1 vehicle", "2 vehicles", "3 vehicles")
+HBSHOP[,-1] <- (HBSHOP[,-1] * 129614 / sums["HBSHP"]) %>% round(digits = 3)
+HBSHOP %>%
+  my_flextable() %>%
+  add_header_lines("HBSHOP")
+```
+There are still a few seeming inconsistencies: for example in some cases the trip rates decrease as vehicle count increases. While at first glance this would seem unrealistic, of note is that all of these trips we are looking at are \emph{home-based}. It is not unreasonable to assume that with fewer vehicles, more trips are likely to begin or end at home, rather than individuals making a long tour with multiple trips while away from the house, either due to using public transportation or needing to share vehicles (or both).\par
+Because of this, and because the trip rates are already at the edges of the confidence intervals, we didn't want to adjust these more than necessary, so for the most part they are left as they are.
+
+Trip Attraction Rates
+===========================
+In order to calculate the total number of trips attracted for the outlined trip purposes, we began by accessing the information located under the Trip Distribution section in Cube. We then opened the Lookup Files (1, 3, 5) for the three trip purposes located under the Household Trip Production section where we found matrices that are made up of the following ratios: workers per household and the number of vehicles per household. With these matrices, we were able to begin the process of solving for the total number of trips attracted for the three purposes by adjusting the rates that we solved for in Homework #2. The following are the processes and results that we found whilst solving for the total number trips for the trip purposes HBW, HBO and HBShop.
+
+```{r attr, echo=FALSE}
+tibble(
+  c("HBW", "HBO", "HBSHOP"),
+  c(118653, 267987, 129614),
+  c(122135, 269084, 129759),
+  c("-2.93%", "-0.41%", "-0.11%")
+) %>%
+  `colnames<-`(c("Purpose", "Target Value", "Final Value", "Margin of Error")) %>%
+  my_flextable()
+```
+
+### HBW
+
+For HBW, we began by assuming values for three worker households and slightly reduced a suspiciously high value for two worker and zero vehicle households. Next, we ran the model, and found that the trip distribution yielded too many HBW trips. We performed a few iterations of reducing the trip production rates until the trip attraction results for every trip purpose were very close to the target values. In summary, we reduced all trip production rate values for HBW trips with more than zero workers (since those rates were already zero), giving the largest reduction to three worker households because those values were arbitrarily assigned. We were also sure to avoid any illogical results, such as trip rates dropping as the number of workers increased with a constant vehicle count. When we were finished running our model, we ended up with a total trip count of 122,135; which is about 4,000 more than the target value. The table below shows our final total from running the trip attraction model for HBW. Based on our total trip number of 122,135 for HBW, we find that the margin or error based on a 95% confidence interval for the target value of 118,653 is -2.93%.
+
+```{r attr_hbw, echo=FALSE}
+tibble(
+  c(0,1,2,3),
+  c(0, 0.299, 1.51, 2.21),
+  c(0, .889, 1.721, 2.36),
+  c(0, 1.095, 2.058, 2.74),
+  c(0, 1.101, 2.339, 2.92)
+) %>%
+  `colnames<-`(c("wrkcount", "0 vehicles", "1 vehicles", "2 vehicles", "3 vehicles")) %>%
+  my_flextable()
+```
+
+### HBO
+
+For HBO trips, when we ran the original model, we found that even without any alterations to the rate values, our total number was already fairly close to the target value.  However, upon closer inspection of the rates,  we noticed some potentially illogical gaps such as the trip count significantly reducing when the vehicle count increases. Specifically, the trip rate dropped from 3.000 to 1.895 when the two-person household went from zero cars to one car. We were able to reconcile this discrepancy by attributing it to lifestyle choices that were affected by possession of a single vehicle. A household without a car is more likely to go from home to an “other” attraction and back than a household that owns a car, which household may make many more not-home-based trips in lieu of these HBO trips. The model gave a total trip count of 269,084; which is less than 2,000 higher than the target value. Based on our total trip count for HBO, we find that the margin or error for the target value of  267,987 is -0.41%.
+
+### HBSHOP
+
+Similar to the HBO trip attraction model, running the HBShop model with the trip rates from the production model yields results very close to the target value. Specifically, the model returned a total trip count of 129,759 HBShop trips. No adjustments were needed for the trip attraction model in this case. Based on our total trip count of 129,759 for HBShop, we find that the margin or error for the target value of 129,614 is -0.11%.
+
+Conclusion
+=========================
+In the end we stuck with the total trip productions found because we found they were hitting most of the survey targets. Using the trip production model to find the trip attractions rates in Cube, we found the model wasn’t as accurate. We originally planned on using the linear regression model from the second homework to generate trip attraction summations in cube, but we were told to use the trip production model outputs. This helped us find calibrated trip generation models that were within the 95% confidence interval we chose for each target except for HBW, so we adjusted the generation matrix in Cube. For the rest of the purposes we calculated the total trip attractions, but we didn’t have target values to calibrate those trip generation matrices and compare them. We felt that our final totals for trip productions and attractions for each purpose could confidently be used to determine models like mode choice in the future because they were close to the given survey target values. 
+
