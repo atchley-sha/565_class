@@ -1,0 +1,42 @@
+---
+title: ""
+author: "Hayden Atchley"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+geometry: margin=1in
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "preamble.tex"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r load_packages, include=FALSE}
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(
+  pacman,
+  tidyverse,
+  flextable,
+  knitr,
+  mlogit,
+  broom
+  )
+```
+
+```{r functions, include=FALSE}
+my_flextable <- function(tibble){
+  flextable(tibble) %>%
+  autofit() %>%
+  align(align = "center", part = "all")
+}
+```
+
