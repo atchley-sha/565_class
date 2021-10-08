@@ -11,8 +11,15 @@ pacman::p_load(
 worktrips <- read_rds("data/worktrips_dfidx.rds")
 worktrips
 
+alternatives <- worktrips$idx$alternative %>%
+  unique()
+
+num_alt <- length(alternatives)
+
 ##### Question 1 #####
-lmeq
+lmeq <- tibble(
+  Alternative = c("Drive Alone", "Share 2", "Share 3+", "Transit", "Bike", "Walk"),
+  Intercept = rep.int(1/num_alt, times = num_alt))
 
 lmint <- mlogit(CHOSEN ~ 1, worktrips)
 
