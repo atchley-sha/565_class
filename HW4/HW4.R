@@ -13,13 +13,17 @@ worktrips
 
 alternatives <- worktrips$idx$alternative %>%
   unique()
+population <- worktrips$idx$id %>%
+  unique()
 
 num_alt <- length(alternatives)
+num_pop <- length(population)
 
 ##### Question 1 #####
 lmeq <- tibble(
   Alternative = c("Drive Alone", "Share 2", "Share 3+", "Transit", "Bike", "Walk"),
   Intercept = rep.int(1/num_alt, times = num_alt))
+lmeqLL <- num_pop * log(1/num_alt)
 
 lmint <- mlogit(CHOSEN ~ 1, worktrips)
 

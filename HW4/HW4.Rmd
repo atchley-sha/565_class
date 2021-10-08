@@ -28,7 +28,8 @@ pacman::p_load(
   flextable,
   knitr,
   mlogit,
-  broom
+  broom,
+  modelsummary
   )
 ```
 
@@ -39,4 +40,6 @@ my_flextable <- function(tibble){
   align(align = "center", part = "all")
 }
 ```
+
+remotes::install_github("ThinkR-open/remedy")
 
