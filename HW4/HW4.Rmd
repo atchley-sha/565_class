@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Homework #4"
 author: "Hayden Atchley"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 geometry: margin=1in
@@ -14,7 +14,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	message = FALSE,
 	warning = FALSE
 )
@@ -29,7 +29,8 @@ pacman::p_load(
   knitr,
   mlogit,
   broom,
-  modelsummary
+  modelsummary,
+  magrittr
   )
 ```
 
@@ -39,7 +40,90 @@ my_flextable <- function(tibble){
   autofit() %>%
   align(align = "center", part = "all")
 }
+
+my_msummary <- function(models){
+  modelsummary(
+    models,
+    output = "flextable",
+    estimate = "{estimate} ({std.error}){stars}",
+    statistic = NULL,
+    gof_omit = ".IC"
+  ) %>%
+  autofit()
+}
 ```
 
-remotes::install_github("ThinkR-open/remedy")
+\RaggedRight
 
+In order to estimate the models, we first need to load the data:
+```{r load}
+worktrips <- read_rds("data/worktrips_dfidx.rds")
+```
+
+4.1
+----------------------
+The three models I calculated are the equal-shares, market shares, and travel time. the equal-shares model has a probability of \(1/6\) for each mode, since there are 6 modes. The other two models are presented below:
+```{r models}
+lmint <- mlogit(CHOSEN ~ 1, worktrips)
+lmtt <- mlogit(CHOSEN ~ TVTT, worktrips)
+
+list(Market = lmint, Travel = lmtt) %>%
+  my_msummary() %>%
+  align(j = 2:3, align = "center", part = "all")
+```
+
+The rho2 and rho20 values given are the \(\rho^2\) values with respect to the market shares and equal-shares models, respectively. The `summary()` command generally reports only the first of these two values, so in many cases the \(\rho^2\) value is relative to the market shares (or average) model.
+
+\pagebreak
+
+4.2
+----------------------
+I estimated a model with just travel time and cost:
+```{r votmodel}
+lmvot <- mlogit(CHOSEN ~ TVTT + COST, worktrips)
+list(VOT_model = lmvot) %>%
+  my_msummary() %>%
+  align(j = 2, align = "center", part = "all")
+```
+
+The value of time (VOT) is the time coefficient divided by the cost coefficient, adjusting for units to get dollars per hour:
+```{r vot}
+vot <- unname(lmvot$coefficients["TVTT"]) /
+  unname(lmvot$coefficients["COST"]) *
+  (60/100)
+vot
+```
+This is possibly a bit low, considering average wages, but it may be that people value their time less when travelling than when working, as travel usually requires less effort. I think it may be too low, but not by too much.
+
+\pagebreak
+
+4.3
+---------------------------
+I calculated a model with IVTT and OVTT:
+```{r waitmodel}
+lmwait <- mlogit(CHOSEN ~ IVTT + OVTT, worktrips)
+list(wait_model = lmwait) %>%
+  my_msummary() %>%
+  align(j = 2, align = "center", part = "all")
+```
+
+In order to see how people regard waiting vs. traveling, I divided the OVTT by IVTT:
+```{r wait}
+wait <- unname(lmwait$coefficients["OVTT"]) /
+  unname(lmwait$coefficients["IVTT"])
+wait
+```
+This implies that people hate waiting over 80 times more than they hate IVTT, which is quite a significant gap! This seems to me to be a bit high, but people do really hate waiting, so it may not be too unreasonable after all.
+
+\pagebreak
+
+4.4
+--------------------------
+I estimated a model with residential population density and workplace employment density, as well as with affordability:
+```{r densmodel}
+lmdens <- mlogit(CHOSEN ~ COSTINC | RSPOPDEN + WKEMPDEN, worktrips)
+list(density_model = lmdens) %>%
+  my_msummary() %>%
+  align(j = 2, align = "center", part = "all")
+```
+It appears that the coefficients for employment density are generally more statistically significant, though some of the coefficients for residential density are higher, especially for walking and biking.
