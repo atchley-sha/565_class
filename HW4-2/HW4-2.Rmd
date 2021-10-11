@@ -1,0 +1,78 @@
+---
+title: "HW 4.2"
+author: "Hayden Atchley"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+geometry: margin=1in
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "preamble.tex"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r load_packages, include=FALSE}
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(
+  pacman,
+  tidyverse,
+  flextable,
+  knitr,
+  magrittr,
+  mlogit,
+  broom,
+  modelsummary
+  )
+```
+
+```{r functions, include=FALSE}
+my_flextable <- function(tibble){
+  flextable(tibble) %>%
+  autofit() %>%
+  align(align = "center", part = "all")
+}
+
+my_msummary <- function(models){
+  modelsummary(
+    models,
+    output = "flextable",
+    estimate = "{estimate} ({std.error}){stars}",
+    statistic = NULL,
+    gof_omit = ".IC"
+  ) %>%
+  autofit()
+}
+```
+
+\RaggedRight
+
+In order to estimate the models, we first need to load the data:
+```{r load}
+worktrips <- read_rds("data/worktrips_dfidx.rds")
+```
+
+4.5
+============================
+The first model I estimated with cost, travel time, OVTT, and employment density.
+I nested this model based on car vs. non-car modes, and constrained the nesting parameter to a single value:
+```{r nl1}
+nl1 <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN,  data = worktrips,
+             nests = list(auto = c('Drive Alone', 'Share 2', 'Share 3+'),
+                          nonauto = c('Bike', 'Walk', 'Transit')),
+             un.nest.el = T)
+summary(nl1)
+```
+Looking at the nesting value gives:
+```{r nl1_nest_value}
+nl1$coefficients["iv"]
+```
+This is a problematic value, as it is greater than 1. 

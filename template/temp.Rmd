@@ -26,7 +26,8 @@ pacman::p_load(
   pacman,
   tidyverse,
   flextable,
-  knitr
+  knitr,
+  magrittr
   )
 ```
 
