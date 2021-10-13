@@ -14,7 +14,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	message = FALSE,
 	warning = FALSE
 )
@@ -49,7 +49,8 @@ my_msummary <- function(models){
     statistic = NULL,
     gof_omit = ".IC"
   ) %>%
-  autofit()
+    autofit() %>%
+    vline(j = 1)
 }
 ```
 
@@ -65,14 +66,40 @@ worktrips <- read_rds("data/worktrips_dfidx.rds")
 The first model I estimated with cost, travel time, OVTT, and employment density.
 I nested this model based on car vs. non-car modes, and constrained the nesting parameter to a single value:
 ```{r nl1}
-nl1 <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN,  data = worktrips,
-             nests = list(auto = c('Drive Alone', 'Share 2', 'Share 3+'),
-                          nonauto = c('Bike', 'Walk', 'Transit')),
-             un.nest.el = T)
-summary(nl1)
+nl1 <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN,
+              data = worktrips,
+              nests = list(auto = c('Drive Alone', 'Share 2', 'Share 3+'),
+                           nonauto = c('Bike', 'Walk', 'Transit')),
+              un.nest.el = T)
+my_msummary(list(nested_model = nl1)) %>%
+  align(j = 2, align = "center", part = "all")
 ```
 Looking at the nesting value gives:
 ```{r nl1_nest_value}
 nl1$coefficients["iv"]
 ```
-This is a problematic value, as it is greater than 1. 
+This is a problematic value, as it is greater than 1.
+If we used this value, then a decrease in utility would cause people to choose that mode more.
+Because of this, we should either set the nesting parameter to equal 1 (effectively un-nesting the mode choice), or possibly set the `un.nest.el` argument to be `FALSE`, which would give us different nesting parameters for each nest (some of which may be less than 1 and useable).
+
+
+4.6
+=================================
+The next models are segmented based on income, with $50,000 as the cutoff point.
+I also added vehicles per worker (`VEHBYWRK`) as a covariate:
+```{r nl2}
+nl2A <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN + VEHBYWRK,
+               data = worktrips %>% filter(HHINC < 50),
+               nests = list(auto = c('Drive Alone', 'Share 2', 'Share 3+'),
+                            nonauto = c('Bike', 'Walk', 'Transit')),
+               un.nest.el = T)
+
+nl2B <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN + VEHBYWRK,
+               data = worktrips %>% filter(HHINC > 50),
+               nests = list(auto = c('Drive Alone', 'Share 2', 'Share 3+'),
+                            nonauto = c('Bike', 'Walk', 'Transit')),
+               un.nest.el = T)
+
+my_msummary(list(`< $50,000` = nl2A, `> $50,000` = nl2B))
+```
+
