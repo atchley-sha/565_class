@@ -50,7 +50,9 @@ my_msummary <- function(models){
     gof_omit = ".IC"
   ) %>%
     autofit() %>%
-    vline(j = 1)
+    vline(j = 1) %>%
+    align(align = "center", part = "header") %>%
+    align(j = 1, align = "left", part = "all")
 }
 ```
 
@@ -71,8 +73,7 @@ nl1 <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN,
               nests = list(auto = c('Drive Alone', 'Share 2', 'Share 3+'),
                            nonauto = c('Bike', 'Walk', 'Transit')),
               un.nest.el = T)
-my_msummary(list(nested_model = nl1)) %>%
-  align(j = 2, align = "center", part = "all")
+my_msummary(list(nested_model = nl1))
 ```
 Looking at the nesting value gives:
 ```{r nl1_nest_value}
