@@ -1,3 +1,4 @@
 rvtpo_bare/
 rvtpo_test/
-.Rproj.user
+*.Rproj.user
+*.Rhistory
