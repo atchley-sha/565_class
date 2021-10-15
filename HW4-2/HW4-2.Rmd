@@ -1,7 +1,7 @@
 ---
 title: "HW 4.2"
 author: "Hayden Atchley"
-date: '`r format(Sys.Date(), "%B %d, %Y")`'
+date: '`r gsub(" 0", "", format(Sys.Date(), "%B %d, %Y"))`'
 geometry: margin=1in
 output:
   pdf_document:
@@ -65,8 +65,8 @@ worktrips <- read_rds("data/worktrips_dfidx.rds")
 
 4.5
 ============================
-The first model I estimated with cost, travel time, OVTT, and employment density.
-I nested this model based on car vs. non-car modes, and constrained the nesting parameter to a single value:
+The first model I estimated with cost, travel time, OVTT, and employment density. I nested this model based on car vs. non-car modes, and constrained the nesting parameter to a single value:
+
 ```{r nl1}
 nl1 <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN,
               data = worktrips,
@@ -80,14 +80,12 @@ Looking at the nesting value gives:
 nl1$coefficients["iv"]
 ```
 This is a problematic value, as it is greater than 1.
-If we used this value, then a decrease in utility would cause people to choose that mode more.
-Because of this, we should either set the nesting parameter to equal 1 (effectively un-nesting the mode choice), or possibly set the `un.nest.el` argument to be `FALSE`, which would give us different nesting parameters for each nest (some of which may be less than 1 and useable).
+If we used this value, then a decrease in utility would cause people to choose that mode more. Because of this, we should either set the nesting parameter to equal 1 (effectively un-nesting the mode choice), or possibly set the `un.nest.el` argument to be `FALSE`, which would give us different nesting parameters for each nest (some of which may be less than 1 and usable).
 
 
 4.6
-=================================
-The next models are segmented based on income, with $50,000 as the cutoff point.
-I also added vehicles per worker (`VEHBYWRK`) as a covariate:
+======================
+The next models are segmented based on income, with $50,000 as the cutoff point. I also added vehicles per worker (`VEHBYWRK`) as a covariate:
 ```{r nl2}
 nl2A <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN + VEHBYWRK,
                data = worktrips %>% filter(HHINC < 50),
@@ -103,4 +101,21 @@ nl2B <- mlogit(CHOSEN ~ COST + TVTT  + OVTT | WKEMPDEN + VEHBYWRK,
 
 my_msummary(list(`< $50,000` = nl2A, `> $50,000` = nl2B))
 ```
+In this case, the nesting parameters are both reasonable (between 0 and 1), so we can take them as given. A few interesting items of note:
 
+- The employment density affects all modes other than `Drive Alone` positively, but especially so for transit and walking. Employment density has a greater effect on the mode choice for lower-income households than for high-income ones. This makes sense especially for walking, since walking costs nothing but is usually only feasible in more urban areas.
+- The value of time (VOT) can be calculated for the two groups by taking the `TVTT` coefficient divided by the `COST` coefficient and adjusting units:
+```{r vot}
+tibble(VOT = "$ / hr",
+       `< $50,000` = nl2A$coefficients["TVTT"] / nl2A$coefficients["COST"] * 60/100,
+       `> $50,000` = nl2B$coefficients["TVTT"] / nl2B$coefficients["COST"] * 60/100) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  my_flextable() %>%
+  vline(j = 1)
+```
+This is a bit counter-intuitive, as we would expect the higher-income people to have a higher value of time. However, it may make sense, as higher-income jobs can often be more forgiving of tardiness than lower-income jobs (which includes many service and similar jobs).
+
+
+4.7
+==================
+Of all the models calculated so far (including the previous homework segment), the final two seem to be the best in terms of likelihood, with the best \(\rho^2\) and log likelihood values. They also seem to be relatively reasonable, with most coefficients having expected signs and believable values. However, the lower-income model does have a couple oddities, in the form of the `Walk` intercept and the `OVTT` coefficient: both are positive, and probably should be negative. It's possible that at least the positive `Walk` intercept may in part be explained by the fact that lower-income people are less likely to own as many vehicles. Since we don't have household vehicle ownership as a factor, this may be picked up in the intercept. However, the `OVTT` coefficient is less explainable. However, it is not statistically significant, so it may be better not to include it in the model at all.
