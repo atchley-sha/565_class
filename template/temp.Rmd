@@ -14,7 +14,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	message = FALSE,
 	warning = FALSE
 )
@@ -27,15 +27,12 @@ pacman::p_load(
   tidyverse,
   flextable,
   knitr,
-  magrittr
+  magrittr,
+  devtools
   )
+if(!require(packageSHA)) install_github("atchley-sha/R-packageSHA")
+library(packageSHA)
 ```
 
-```{r functions, include=FALSE}
-my_flextable <- function(tibble){
-  flextable(tibble) %>%
-  autofit() %>%
-  align(align = "center", part = "all")
-}
-```
+\RaggedRight
 
