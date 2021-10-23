@@ -3,5 +3,8 @@ rvtpo_test/
 *.Rproj.user
 *.Rhistory
 .Rproj.user
+<<<<<<< HEAD
 rvtpo_bare_old/
 *.zip
+=======
+>>>>>>> eecd3c3258555dd5b88c3c3ac4e6dd1cff85a3e4
