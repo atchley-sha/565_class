@@ -1,0 +1,131 @@
+---
+title: "Lab 4: Mode and Destination Choice"
+author: "Hayden Atchley, Austin Nichalson, Tristan Parker, Steven Goodsell"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+geometry: margin=1in
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "preamble.tex"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r load_packages, include=FALSE}
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(
+  pacman,
+  tidyverse,
+  flextable,
+  knitr,
+  magrittr,
+  devtools
+  )
+if(!require(packageSHA)) install_github("atchley-sha/R-packageSHA")
+library(packageSHA)
+```
+
+\RaggedRight
+
+This lab is focused on calibrating the mode and destination choice models for the Roanoke Scenario in Cube. In Cube, these two models happen mathematically at the same time, and the mode choice logsums end up being factored into destination choice. As such, we had to iterate back and forth between mode choice and destination choice in order to eventually arrive at a calibrated model.
+
+
+MODE CHOICE
+=================================================
+
+### Mode Choice Coefficients
+
+Below are the mode choice coefficients that Cube uses. These coefficients are fixed, but we provide them for reference:
+```{r}
+
+```
+
+Upon analyzing the first row, `IVTT`, it was interesting to observe that the coefficient beta values differ between HBW and NHB given that there is no wait time associated with this particular mode choice.  Unlike public transit, the luxury of a personal vehicle is the ability to hop inside an automobile and drive to a destination whenever one desires. Personal vehicles also eliminate the terminal coefficients when calculating utilities because there is no need to factor in a wait period that is associated with transfer times or walking somewhere. Given that the overall units and values associated with `IVTT` don’t change based on the trip purposes, it is interesting to see that the utilities between HBW and NHB would differ despite the terminal value being nonexistent. Ultimately, if we were to compare the coefficients for the different trip purposes, we would find that the coefficient for HBW would have the greatest effect on the resulting utility, given that it’s the largest. With this knowledge, we could make the assumption that because the utility for HBW is the largest, that people are more likely to use a personal vehicle as their mode choice when making a trip to work, more so than the other trip destinations.
+
+Another coefficient that is worth noting is `AUTOCOST.` As we analyzed the table, we found that the `AUTOCOST` is the same for all trip purposes given; nevertheless, the coefficient, 13.6, is extremely high when compared to other coefficients in the table. Because the coefficient is so high, it is easily determinable that it will have a major impact on all utilities associated with the mode choice, auto. As we compared the auto utility linear equation with transit and walk, we noticed that they also have cost associations as well. The costs associated with transit and walking are not given in the table, so we were not able to definitively conclude which will result in the highest utility. Assuming that the coefficients associated with transit and walking are alternative-specific, we presumed that the cost coefficient for walking would either be zero or minimal. Additionally, the coefficient associated with transit/ bus would be similar or slightly less than auto. However, another factor that is important to take into account is the time trade off associated with each of these mode choices. Much like the cost coefficients associated with the mode choices, the time coefficients will most likely vary linearly according to the cost. The more expensive the cost of travel, the less time it will take to travel to the desired destination. 
+
+After comparing the coefficients for all trip purposes and alternatives, we find that the beta values that will have the smallest impact on its corresponding utility, is HBW `COST`, at -0.00158. This is obviously excluding the  alternatives `CBD` and `NXFER`, in which the coefficients will have zero impact on their utility values. However, it is interesting to note that cost has less of an impact on utility than coefficients like waiting. Because cost and waiting are not measured in the same units, it is difficult to compare evenly the direct impact that each alternative has on an individual’s mode choice  decision; this is why it is important to compare the utilities. However, given that the coefficient/ beta value for cost is less than the smallest HBW wait coefficient by 0.02342, we can assume that the influence on utility will be much more minuscule. We know that in economic theory, people will pick alternatives based upon which brings them the most utility. In terms of real-world application, this would suggest to us that the factor of waiting is more impactful on an individual’s mode choice decision than cost.
+
+### Mode Choice Constants
+
+We also had mode-specific constants, and these are what we calibrated (at least for HBW and HBO trips). The original values we had are presented below, and the values we are looking to calibrate are highlighted:
+```{r}
+
+```
+
+The original values for the highlighted cells were based on previous estimates. These constants ideally should be quite small, as it would be best if the coefficients were accurate enough to predict most of what occurs. However, we must adjust these constants to match our specific situation.
+
+
+DESTINATION CHOICE
+=================================================
+
+The main calibration to be done in this type of destination choice model is with the distance-decay parameters. The intent is to make the model's trip length frequency distribution (TLFD) match the observed distribution. Though the Roanoke scenario has multiple types of decay functions, we focused primarily on the third-order polynomial decay function (\(\beta_dd + \beta_{d2}d^2 + \beta_{d3}d^3\)).
+
+The observed TLFD that we targeted is given below:
+```{r}
+
+
+ggplot(tlfd %>% pivot_longer(HBW:HBSH, names_to = purpose, values_to = share), 
+       aes(x = LOW, y = share, color = purpose)) +
+  geom_line() +
+  xlab("Distance") + ylab("%Trips")
+```
+
+
+
+CALIBRATION
+==================================================
+
+The main principle we used for calibration of the models is the following equation:
+\[\alpha_{n+1} = \alpha_n + \log(A_j/S_j)\],
+where \(A_j\) is the target and \(S_j\) the model output.\(A_j\) and \(S_j\) are expressed in shares, i.e. percentage of the total. Since mode choice and destination choice are mathematically intertwined, at least in this case, we had to iterate back and forth between mode and destination choice to eventually arrive at our calibrated values for both.
+
+### Mode Choice
+
+The target shares for each of the modes is given below:
+```{r}
+
+```
+
+For the mode choice model, we applied our calibration equation directly. The three constants we calibrated were for the Share (carpool), Transit, and Non-motorized modes for HBW and HBO trips. In some cases, our equation gave us unreasonable adjustments between iterations, and so in those cases we opted to adjust the values by a more reasonable amount. A graph of how our constants varied over time, as well as a table showing our initial/final values and mode choice shares, are given below:
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Destination Choice
+
+For destination choice, we applied the equation more indirectly. After each iteration, we compared the model TLFD to the target TLFD. We then took the error as \(\log(A_j/S_j)\), and fitted a third-order polynomial to the error plot. The coefficients of the polynomial fit are what we put into Cube as our calibration terms. A plot of how these values changed over time, as well as plots of the target shares, model shares, and error are given below:
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+CONCLUSION
+=================================================
+
+Eventually, we reached results that we were satisfied with, 
