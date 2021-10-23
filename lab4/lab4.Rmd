@@ -14,7 +14,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = TRUE,
+	echo = FALSE,
 	message = FALSE,
 	warning = FALSE
 )
@@ -46,7 +46,8 @@ MODE CHOICE
 
 Below are the mode choice coefficients that Cube uses. These coefficients are fixed, but we provide them for reference:
 ```{r}
-
+read_csv("data/MC_Coefficients.csv") %>%
+  my_flextable()
 ```
 
 Upon analyzing the first row, `IVTT`, it was interesting to observe that the coefficient beta values differ between HBW and NHB given that there is no wait time associated with this particular mode choice.  Unlike public transit, the luxury of a personal vehicle is the ability to hop inside an automobile and drive to a destination whenever one desires. Personal vehicles also eliminate the terminal coefficients when calculating utilities because there is no need to factor in a wait period that is associated with transfer times or walking somewhere. Given that the overall units and values associated with `IVTT` don’t change based on the trip purposes, it is interesting to see that the utilities between HBW and NHB would differ despite the terminal value being nonexistent. Ultimately, if we were to compare the coefficients for the different trip purposes, we would find that the coefficient for HBW would have the greatest effect on the resulting utility, given that it’s the largest. With this knowledge, we could make the assumption that because the utility for HBW is the largest, that people are more likely to use a personal vehicle as their mode choice when making a trip to work, more so than the other trip destinations.
@@ -59,7 +60,8 @@ After comparing the coefficients for all trip purposes and alternatives, we find
 
 We also had mode-specific constants, and these are what we calibrated (at least for HBW and HBO trips). The original values we had are presented below, and the values we are looking to calibrate are highlighted:
 ```{r}
-
+read_csv("data/MC_Constants.csv") %>%
+  my_flextable()
 ```
 
 The original values for the highlighted cells were based on previous estimates. These constants ideally should be quite small, as it would be best if the coefficients were accurate enough to predict most of what occurs. However, we must adjust these constants to match our specific situation.
@@ -72,9 +74,9 @@ The main calibration to be done in this type of destination choice model is with
 
 The observed TLFD that we targeted is given below:
 ```{r}
+tlfd <- read_csv("data/tlfd.csv")
 
-
-ggplot(tlfd %>% pivot_longer(HBW:HBSH, names_to = purpose, values_to = share), 
+ggplot(tlfd %>% pivot_longer(HBW:HBSH, names_to = "purpose", values_to = "share"), 
        aes(x = LOW, y = share, color = purpose)) +
   geom_line() +
   xlab("Distance") + ylab("%Trips")
@@ -93,21 +95,24 @@ where \(A_j\) is the target and \(S_j\) the model output.\(A_j\) and \(S_j\) are
 
 The target shares for each of the modes is given below:
 ```{r}
-
+read_csv("data/MC_Targets.csv") %>%
+  my_flextable()
 ```
 
-For the mode choice model, we applied our calibration equation directly. The three constants we calibrated were for the Share (carpool), Transit, and Non-motorized modes for HBW and HBO trips. In some cases, our equation gave us unreasonable adjustments between iterations, and so in those cases we opted to adjust the values by a more reasonable amount. A graph of how our constants varied over time, as well as a table showing our initial/final values and mode choice shares, are given below:
+For the mode choice model, we applied our calibration equation directly. The three constants we calibrated were for the Share (carpool), Transit, and Non-motorized modes for HBW and HBO trips. In some cases, our equation gave us unreasonable adjustments between iterations, and so in those cases we opted to adjust the values by a more reasonable amount. A table showing our initial/final values and mode choice shares is given below:
 ```{r}
+read_csv("data/MC_Results_HBW.csv") %>%
+  my_flextable() %>%
+  add_header_lines("HBW")
 
-```
-
-```{r}
-
+read_csv("data/MC_Results_HBO.csv") %>%
+  my_flextable() %>%
+  add_header_lines("HBO")
 ```
 
 ### Destination Choice
 
-For destination choice, we applied the equation more indirectly. After each iteration, we compared the model TLFD to the target TLFD. We then took the error as \(\log(A_j/S_j)\), and fitted a third-order polynomial to the error plot. The coefficients of the polynomial fit are what we put into Cube as our calibration terms. A plot of how these values changed over time, as well as plots of the target shares, model shares, and error are given below:
+For destination choice, we applied the equation more indirectly. After each iteration, we compared the model TLFD to the target TLFD. We then took the error as \(\log(A_j/S_j)\), and fitted a third-order polynomial to the error plot. The coefficients of the polynomial fit are what we put into Cube as our calibration terms. Final plots of the target shares, model shares, and error are given below:
 ```{r}
 
 ```
@@ -128,4 +133,4 @@ For destination choice, we applied the equation more indirectly. After each iter
 CONCLUSION
 =================================================
 
-Eventually, we reached results that we were satisfied with, 
+Eventually, we reached results that we were satisfied with. Though not perfect (e.g. in some parts our TLFD graphs don't seem to match up flawlessly), the error that we ended up with was generally quite small, within a couple percentage points. As such, we consider this model to be calibrated enough for the next steps.
