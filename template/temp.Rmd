@@ -30,7 +30,7 @@ pacman::p_load(
   magrittr,
   devtools
   )
-if(!require(packageSHA)) install_github("atchley-sha/R-packageSHA")
+install_github("atchley-sha/R-packageSHA")
 library(packageSHA)
 ```
 
