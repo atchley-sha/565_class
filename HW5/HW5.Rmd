@@ -1,0 +1,107 @@
+---
+title: "Homework 5: Network Assignmnet and Validation"
+author: "Hayden Atchley"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+geometry: margin=1in
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "preamble.tex"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r load_packages, include=FALSE}
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(
+  pacman,
+  tidyverse,
+  flextable,
+  knitr,
+  magrittr,
+  devtools,
+  pracma
+  )
+install_github("atchley-sha/R-packageSHA")
+library(packageSHA)
+```
+
+\RaggedRight
+\graphicspath{ {./images/} }
+
+Given a network of
+
+\begin{figure}[h!]
+\includegraphics[width=0.5\textwidth]{network.png}
+\end{figure}
+
+and link travel time equations of
+
+```{=latex}
+\begin{align*}
+t_{AD} &= 20 + 0.01q_{AD}    \\
+t_{AC} &= 10 + 0.005q_{AC}   \\
+t_{CD} &= 12 + 0.005q_{CD}   \\
+t_{BC} &= 7.25 + 0.005q_{BC} \\
+t_{BD} &= 20 + 0.01q_{BD},
+\end{align*}
+```
+
+with 7000 trips from A to D and 500 from B to D:
+
+5.1
+=====================================
+
+We set up a matrix to solve the system of equations:
+
+```{=latex}
+\begin{equation*}
+  \begin{blockarray}{ccccccccccc}
+  q_{AD} & q_{AC} & q_{CD} & q_{BC} & q_{BD} & t_{AD} & t_{AC} & t_{CD} & t_{BC} & t_{BD} & = \\
+  \begin{block}{(cccccccccc|c)}
+  0.01   & 0      & 0      & 0      & 0      & -1     & 0      &  0     & 0      &  0     & -20 \\
+  0      & 0.005  & 0      & 0      & 0      & 0      & -1     &  0     & 0      &  0     & -10 \\
+  0      & 0      & 0.005  & 0      & 0      & 0      & 0      &  -1    & 0      &  0     & -12 \\
+  0      & 0      & 0      & 0.005  & 0      & 0      & 0      &  0     & - 1    &  0     & -7.25 \\
+  0      & 0      & 0      & 0      & 0.01   & 0      & 0      &  0     & 0      &  -1    & -20\\
+  0      & 0      & 0      & 0      & 0      & -1     & 1      &  1     & 0      &  0     & 0 \\
+  0      & 0      & 0      & 0      & 0      & 0      & 0      &  1     & 1      &  -1    & 0 \\
+  1      & 1      & 0      & 0      & 0      & 0      & 0      &  0     & 0      &  0     & 7000 \\
+  0      & 0      & 0      & 1      & 1      & 0      & 0      &  0     & 0      &  0     & 5000 \\
+  0      & 1      & -1     & 1      & 0      & 0      & 0      &  0     & 0      &  0     & 0 \\
+  \end{block}
+  \end{blockarray}
+\end{equation*}
+```
+
+```{r}
+matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
+0,0.005,0,0,0,0,-1,0,0,0,-10,
+0,0,0.005,0,0,0,0,-1,0,0,-12,
+0,0,0,0.005,0,0,0,0,-1,0,-7.25,
+0,0,0,0,0.01,0,0,0,0,-1,-20,
+0,0,0,0,0,-1,1,1,0,0,0,
+0,0,0,0,0,0,0,1,1,-1,0,
+1,1,0,0,0,0,0,0,0,0,7000,
+0,0,0,1,1,0,0,0,0,0,5000,
+0,1,-1,1,0,0,0,0,0,0,0
+         ),
+       byrow = T, ncol = 11) %>%
+  rref()
+```
+
+###TODO: write more about this
+
+
+5.2
+====================================
+
