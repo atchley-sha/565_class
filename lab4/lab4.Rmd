@@ -56,6 +56,8 @@ Another coefficient that is worth noting is `AUTOCOST.` As we analyzed the table
 
 After comparing the coefficients for all trip purposes and alternatives, we find that the beta values that will have the smallest impact on its corresponding utility, is HBW `COST`, at -0.00158. This is obviously excluding the  alternatives `CBD` and `NXFER`, in which the coefficients will have zero impact on their utility values. However, it is interesting to note that cost has less of an impact on utility than coefficients like waiting. Because cost and waiting are not measured in the same units, it is difficult to compare evenly the direct impact that each alternative has on an individual’s mode choice  decision; this is why it is important to compare the utilities. However, given that the coefficient/ beta value for cost is less than the smallest HBW wait coefficient by 0.02342, we can assume that the influence on utility will be much more minuscule. We know that in economic theory, people will pick alternatives based upon which brings them the most utility. In terms of real-world application, this would suggest to us that the factor of waiting is more impactful on an individual’s mode choice decision than cost.
 
+\pagebreak
+
 ### Mode Choice Constants
 
 We also had mode-specific constants, and these are what we calibrated (at least for HBW and HBO trips). The original values we had are presented below, and the values we are looking to calibrate are highlighted:
@@ -66,13 +68,15 @@ read_csv("data/MC_Constants.csv") %>%
 
 The original values for the highlighted cells were based on previous estimates. These constants ideally should be quite small, as it would be best if the coefficients were accurate enough to predict most of what occurs. However, we must adjust these constants to match our specific situation.
 
+\pagebreak
 
 DESTINATION CHOICE
 =================================================
 
 The main calibration to be done in this type of destination choice model is with the distance-decay parameters. The intent is to make the model's trip length frequency distribution (TLFD) match the observed distribution. Though the Roanoke scenario has multiple types of decay functions, we focused primarily on the third-order polynomial decay function (\(\beta_dd + \beta_{d2}d^2 + \beta_{d3}d^3\)).
 
-The observed TLFD that we targeted is given below:
+The observed TLFD that we targeted is given below
+
 ```{r}
 tlfd <- read_csv("data/tlfd.csv")
 
@@ -82,13 +86,13 @@ ggplot(tlfd %>% pivot_longer(HBW:HBSH, names_to = "purpose", values_to = "share"
   xlab("Distance") + ylab("%Trips")
 ```
 
-
+\pagebreak
 
 CALIBRATION
 ==================================================
 
 The main principle we used for calibration of the models is the following equation:
-\[\alpha_{n+1} = \alpha_n + \log(A_j/S_j)\],
+\[\alpha_{n+1} = \alpha_n + \log(A_j/S_j),\]
 where \(A_j\) is the target and \(S_j\) the model output.\(A_j\) and \(S_j\) are expressed in shares, i.e. percentage of the total. Since mode choice and destination choice are mathematically intertwined, at least in this case, we had to iterate back and forth between mode and destination choice to eventually arrive at our calibrated values for both.
 
 ### Mode Choice
@@ -112,22 +116,29 @@ read_csv("data/MC_Results_HBO.csv") %>%
 
 ### Destination Choice
 
-For destination choice, we applied the equation more indirectly. After each iteration, we compared the model TLFD to the target TLFD. We then took the error as \(\log(A_j/S_j)\), and fitted a third-order polynomial to the error plot. The coefficients of the polynomial fit are what we put into Cube as our calibration terms. Final plots of the target shares, model shares, and error are given below:
+For destination choice, we applied the equation more indirectly. After each iteration, we compared the model TLFD to the target TLFD. We then took the error as \(\log(A_j/S_j)\), and fitted a third-order polynomial to the error plot. The coefficients of the polynomial fit are what we put into Cube as our calibration terms. Final tables of the target shares, model shares, and error are given below:
 ```{r}
-
+read_csv("data/DC_HBW.csv") %>%
+  my_flextable() %>%
+  add_header_lines("HBW")
 ```
 
-```{r}
-
-```
+\pagebreak
 
 ```{r}
-
+read_csv("data/DC_HBO.csv") %>%
+  my_flextable() %>%
+  add_header_lines("HBO")
 ```
+
+\pagebreak
 
 ```{r}
-
+read_csv("data/DC_HBSHOP.csv") %>%
+  my_flextable() %>%
+  add_header_lines("HBSHOP")
 ```
+
 
 
 CONCLUSION
