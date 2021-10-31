@@ -29,7 +29,8 @@ pacman::p_load(
   knitr,
   magrittr,
   devtools,
-  pracma
+  pracma,
+  kableExtra
   )
 install_github("atchley-sha/R-packageSHA")
 library(packageSHA)
@@ -55,6 +56,13 @@ t_{BC} &= 7.25 + 0.005q_{BC} \\
 t_{BD} &= 20 + 0.01q_{BD},
 \end{align*}
 ```
+
+```{r}
+timeConsts <- c(20, 10, 12, 7.25, 20)
+timeCoeffs <- c(0.01, 0.005, 0.005, 0.005, 0.01)
+totalVols <- c(7000, 5000)
+```
+
 
 with 7000 trips from A to D and 500 from B to D:
 
@@ -91,8 +99,8 @@ matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
 0,0,0,0,0.01,0,0,0,0,-1,-20,
 0,0,0,0,0,-1,1,1,0,0,0,
 0,0,0,0,0,0,0,1,1,-1,0,
-1,1,0,0,0,0,0,0,0,0,7000,
-0,0,0,1,1,0,0,0,0,0,5000,
+1,1,0,0,0,0,0,0,0,0,totalVols[1],
+0,0,0,1,1,0,0,0,0,0,totalVols[2],
 0,1,-1,1,0,0,0,0,0,0,0
          ),
        byrow = T, ncol = 11) %>%
@@ -105,8 +113,115 @@ matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
 5.2
 ====================================
 
+```{r create0table}
+iter0 <- tibble(
+  "$n$" = character(),
+  "$q_{AD}$" = numeric(),
+  "$q_{AC}$" = numeric(),
+  "$q_{CD}$" = numeric(),
+  "$q_{BC}$" = numeric(),
+  "$q_{BD}$" = numeric(),
+  "$t_{AD}$" = numeric(),
+  "$t_{AC}$" = numeric(),
+  "$t_{CD}$" = numeric(),
+  "$t_{BC}$" = numeric(),
+  "$t_{BD}$" = numeric(),
+  "$T_{AD}$" = numeric(),
+  "$T_{ACD}$" = numeric(),
+  "$T_{BD}$" = numeric(),
+  "$T_{BCD}$" = numeric()
+  )
+
+iter0[1,] <- c(list(as.character(0),0,0,0,0,0),
+               timeConsts,
+               list(timeConsts[1],
+                    sum(timeConsts[2:3]),
+                    timeConsts[5],
+                    sum(timeConsts[4:3])
+                    )
+              )
+```
+
+
+5.3
+===================================
+
 ```{r}
 
 ```
+
+
+5.4
+===================================
+
+```{r}
+n = 5
+
+fhwa <- iter0
+f <- iter0[,2:6]
+
+for(i in 1:(n+1)){
+  phi <- 1/i
+  
+  AVol <- if(fhwa[i,]$`$T_{AD}$` < fhwa[i,]$`$T_{ACD}$`) 1 else c(2,3)
+  BVol <- if(fhwa[i,]$`$T_{BD}$` < fhwa[i,]$`$T_{BCD}$`) 5 else c(4,3)
+  
+  f[i,] <- 0
+  f[i,AVol] <- f[i,AVol] + totalVols[1]
+  f[i,BVol] <- f[i,BVol] + totalVols[2]
+  
+  fhwa[i+1,1] = as.character(i)
+  fhwa[i+1,2:6] =
+    (1-phi)*fhwa[i,2:6] + phi*f[i,]
+  
+  incrVols <- fhwa[i+1,2:6] %>% as_vector() %>% unname
+  
+  fhwa[i+1,7:11] = 
+    (timeConsts + timeCoeffs * incrVols) %>%
+    as.list()
+  fhwa[i+1,12:15] = 
+    as.list(c(
+      fhwa[i+1,7],
+      sum(fhwa[i+1,8:9]),
+      fhwa[i+1,11],
+      sum(fhwa[i+1,10:9])
+    ))
+  
+}
+
+fhwa[n+2,] <- fhwa[n+1,]
+fhwa[n+2,1] <- "Final"
+
+fhwa %>% kbl() %>%
+  column_spec(c(1,6,11,13), border_right = T) %>%
+  row_spec(n+1, hline_after = T) %>%
+  kable_styling()
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
