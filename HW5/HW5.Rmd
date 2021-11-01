@@ -71,7 +71,7 @@ We set up a matrix to solve the system of equations:
   \begin{blockarray}{ccccccccccc}
   q_{AD} & q_{AC} & q_{CD} & q_{BC} & q_{BD} & t_{AD} & t_{AC} & t_{CD} & t_{BC} & t_{BD} & = \\
   \begin{block}{(cccccccccc|c)}
-  0.01   & 0      & 0      & 0      & 0      & -1     & 0      &  0     & 0      &  0     & -20 \\
+  0.01   & 0      & 0      & 0      & 0      & -1     & 0      &  0     & 0      &  0     & -20 \topstrut\\
   0      & 0.005  & 0      & 0      & 0      & 0      & -1     &  0     & 0      &  0     & -10 \\
   0      & 0      & 0.005  & 0      & 0      & 0      & 0      &  -1    & 0      &  0     & -12 \\
   0      & 0      & 0      & 0.005  & 0      & 0      & 0      &  0     & - 1    &  0     & -7.25 \\
@@ -80,7 +80,7 @@ We set up a matrix to solve the system of equations:
   0      & 0      & 0      & 0      & 0      & 0      & 0      &  1     & 1      &  -1    & 0 \\
   1      & 1      & 0      & 0      & 0      & 0      & 0      &  0     & 0      &  0     & 7000 \\
   0      & 0      & 0      & 1      & 1      & 0      & 0      &  0     & 0      &  0     & 5000 \\
-  0      & 1      & -1     & 1      & 0      & 0      & 0      &  0     & 0      &  0     & 0 \\
+  0      & 1      & -1     & 1      & 0      & 0      & 0      &  0     & 0      &  0     & 0 \bottomstrut\\
   \end{block}
   \end{blockarray}
 \end{equation*}
@@ -254,13 +254,16 @@ for(i in 1:(n+1)){
 fhwa[n+2,] <- fhwa[n+1,]
 fhwa[n+2,1] <- "Final"
 
-fhwa[,2:6] %<>% round()
-fhwa[,7:15] %<>% round(digits = 1)
+fhwa %<>% as.data.frame()
+fhwa[,2:6] %<>% format(digits = 0)
+fhwa[,7:15] %<>% format(digits = 1)
+
 fhwa %>%
   kbl(booktabs = T,
       linesep = "",
       escape = F,
       caption = "FHWA Successive Averages",
+      digits = 2
       ) %>%
   kable_styling(
     latex_options = c("striped", "HOLD_position", "scale_down", "repeat_header")
