@@ -7,14 +7,14 @@ output:
   pdf_document:
     latex_engine: lualatex
     includes:
-      in_header: "preamble.tex"
+      in_header: "U:/shayd/R_packages/preamble.tex"
 editor_options: 
   chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = TRUE,
+	echo = FALSE,
 	message = FALSE,
 	warning = FALSE
 )
@@ -23,21 +23,14 @@ knitr::opts_chunk$set(
 ```{r load_packages, include=FALSE}
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
-  pacman,
-  tidyverse,
-  flextable,
-  knitr,
-  magrittr,
-  devtools,
-  pracma,
-  kableExtra
+  char = read.csv("U:/shayd/R_packages/packages.csv", header = F)[,1]
   )
-install_github("atchley-sha/R-packageSHA")
-library(packageSHA)
+p_load_gh("atchley-sha/R-packageSHA")
 ```
 
 \RaggedRight
 \graphicspath{ {./images/} }
+\captionsetup[table]{labelformat=empty}
 
 Given a network of
 
@@ -66,6 +59,8 @@ totalVols <- c(7000, 5000)
 
 with 7000 trips from A to D and 500 from B to D:
 
+\pagebreak
+
 5.1
 =====================================
 
@@ -91,8 +86,21 @@ We set up a matrix to solve the system of equations:
 \end{equation*}
 ```
 
+The first about half of these rows come from the trip time equations. The remaining rows come from the following equations:
+```{=latex}
+\begin{align*}
+ t_{AD} &= t_{AC} + t_{CD} \\
+ t_{BD} &= t_{BC} + t_{CD} \\
+ q_{AD} + q_{AC} &= 7000 \\
+ q_{BD} + q_{BC} &= 5000 \\
+ q_{CD} &= q_{AC} + q_{BC}.
+\end{align*}
+```
+
+
+Solving this matrix gives us:
 ```{r}
-matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
+UE <- matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
 0,0.005,0,0,0,0,-1,0,0,0,-10,
 0,0,0.005,0,0,0,0,-1,0,0,-12,
 0,0,0,0.005,0,0,0,0,-1,0,-7.25,
@@ -105,10 +113,40 @@ matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
          ),
        byrow = T, ncol = 11) %>%
   rref()
+UE %>% kbl()
 ```
 
-###TODO: write more about this
+\medskip
 
+or:
+```{r}
+UEAns <- tibble(
+  "$q_{AD}$" = numeric(),
+  "$q_{AC}$" = numeric(),
+  "$q_{CD}$" = numeric(),
+  "$q_{BC}$" = numeric(),
+  "$q_{BD}$" = numeric(),
+  "$t_{AD}$" = numeric(),
+  "$t_{AC}$" = numeric(),
+  "$t_{CD}$" = numeric(),
+  "$t_{BC}$" = numeric(),
+  "$t_{BD}$" = numeric()
+)
+UEAns[1,] <- as.list(UE[,11])
+UEAns %>%
+  kbl(booktabs = T,
+      position = "h",
+      linesep = "",
+      escape = F
+      ) %>%
+  column_spec(5, border_right = T) %>%
+  kable_styling(
+    latex_options = c("striped", "HOLD_position", "repeat_header"),
+    full_width = F
+    )
+```
+
+\pagebreak
 
 5.2
 ====================================
@@ -142,12 +180,36 @@ iter0[1,] <- c(list(as.character(0),0,0,0,0,0),
               )
 ```
 
+```{r}
+read_csv("data/5-2_AON.csv") %>%
+  kbl(booktabs = T,
+      linesep = "",
+      escape = F,
+      caption = "All-or-nothing (AON) Averages"
+      ) %>%
+  column_spec(c(1,6,11,13), border_right = T) %>%
+  row_spec(4, hline_after = T) %>%
+  kable_styling(
+    latex_options = c("striped", "HOLD_position", "scale_down", "repeat_header")
+    )
+```
+
 
 5.3
 ===================================
 
 ```{r}
-
+read_csv("data/5-3_INCR.csv") %>%
+  kbl(booktabs = T,
+      linesep = "",
+      escape = F,
+      caption = "Incremental Assignment"
+      ) %>%
+  column_spec(c(1,6,11,13), border_right = T) %>%
+  row_spec(4, hline_after = T) %>%
+  kable_styling(
+    latex_options = c("striped", "HOLD_position", "scale_down", "repeat_header")
+    )
 ```
 
 
@@ -192,10 +254,19 @@ for(i in 1:(n+1)){
 fhwa[n+2,] <- fhwa[n+1,]
 fhwa[n+2,1] <- "Final"
 
-fhwa %>% kbl() %>%
+fhwa[,2:6] %<>% round()
+fhwa[,7:15] %<>% round(digits = 1)
+fhwa %>%
+  kbl(booktabs = T,
+      linesep = "",
+      escape = F,
+      caption = "FHWA Successive Averages",
+      ) %>%
+  kable_styling(
+    latex_options = c("striped", "HOLD_position", "scale_down", "repeat_header")
+    ) %>%
   column_spec(c(1,6,11,13), border_right = T) %>%
-  row_spec(n+1, hline_after = T) %>%
-  kable_styling()
+  row_spec(n+1, hline_after = T)
 
 
 ```
