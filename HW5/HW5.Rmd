@@ -23,9 +23,10 @@ knitr::opts_chunk$set(
 ```{r load_packages, include=FALSE}
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
-  char = read.csv("../template/packages.csv", header = F)[,1]
+  char = as.character(read.csv("../template/packages.csv", header = F)[,1])
   )
-p_load_gh("atchley-sha/R-packageSHA")
+install_github("atchley-sha/R-packageSHA")
+library(packageSHA)
 ```
 
 \RaggedRight
@@ -70,7 +71,7 @@ We set up a matrix to solve the system of equations:
 \begin{equation*}
   \begin{blockarray}{ccccccccccc}
   q_{AD} & q_{AC} & q_{CD} & q_{BC} & q_{BD} & t_{AD} & t_{AC} & t_{CD} & t_{BC} & t_{BD} & = \\
-  \begin{block}{(cccccccccc|c)}
+  \begin{block}{[cccccccccc|c]}
   0.01   & 0      & 0      & 0      & 0      & -1     & 0      &  0     & 0      &  0     & -20 \topstrut\\
   0      & 0.005  & 0      & 0      & 0      & 0      & -1     &  0     & 0      &  0     & -10 \\
   0      & 0      & 0.005  & 0      & 0      & 0      & 0      &  -1    & 0      &  0     & -12 \\
@@ -99,7 +100,7 @@ The first about half of these rows come from the trip time equations. The remain
 
 
 Solving this matrix gives us:
-```{r}
+```{r results='asis'}
 UE <- matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
 0,0.005,0,0,0,0,-1,0,0,0,-10,
 0,0,0.005,0,0,0,0,-1,0,0,-12,
@@ -113,7 +114,7 @@ UE <- matrix(c(0.01,0,0,0,0,-1,0,0,0,0,-20,
          ),
        byrow = T, ncol = 11) %>%
   rref()
-UE %>% kbl()
+UE %>% write_mat(begin = "\\left[", end = "\\right]")
 ```
 
 \medskip
@@ -141,7 +142,7 @@ UEAns %>%
       ) %>%
   column_spec(5, border_right = T) %>%
   kable_styling(
-    latex_options = c("striped", "HOLD_position", "repeat_header"),
+    latex_options = c("HOLD_position", "repeat_header"),
     full_width = F
     )
 ```
@@ -181,7 +182,11 @@ iter0[1,] <- c(list(as.character(0),0,0,0,0,0),
 ```
 
 ```{r}
-read_csv("data/5-2_AON.csv") %>%
+df <- read_csv("data/5-2_AON.csv") %>%
+  as.data.frame()
+df[,2:6] %<>% format(digits = 0)
+df[,7:15] %<>% format(digits = 1, nsmall = 1)
+df %>%
   kbl(booktabs = T,
       linesep = "",
       escape = F,
@@ -199,7 +204,11 @@ read_csv("data/5-2_AON.csv") %>%
 ===================================
 
 ```{r}
-read_csv("data/5-3_INCR.csv") %>%
+df <- read_csv("data/5-3_INCR.csv") %>%
+  as.data.frame()
+df[,2:6] %<>% format(digits = 0)
+df[,7:15] %<>% format(digits = 1, nsmall = 1)
+df %>% 
   kbl(booktabs = T,
       linesep = "",
       escape = F,
@@ -241,7 +250,7 @@ for(i in 1:(n+1)){
   fhwa[i+1,7:11] = 
     (timeConsts + timeCoeffs * incrVols) %>%
     as.list()
-  fhwa[i+1,12:15] = 
+  fhwa[i+1,12:15] =
     as.list(c(
       fhwa[i+1,7],
       sum(fhwa[i+1,8:9]),
@@ -256,14 +265,13 @@ fhwa[n+2,1] <- "Final"
 
 fhwa %<>% as.data.frame()
 fhwa[,2:6] %<>% format(digits = 0)
-fhwa[,7:15] %<>% format(digits = 1)
+fhwa[,7:15] %<>% format(digits = 1, nsmall = 1)
 
 fhwa %>%
   kbl(booktabs = T,
       linesep = "",
       escape = F,
-      caption = "FHWA Successive Averages",
-      digits = 2
+      caption = "FHWA Successive Averages"
       ) %>%
   kable_styling(
     latex_options = c("striped", "HOLD_position", "scale_down", "repeat_header")
@@ -275,6 +283,8 @@ fhwa %>%
 ```
 
 
+5.5
+====================================
 
 
 
