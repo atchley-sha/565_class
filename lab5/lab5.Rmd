@@ -1,6 +1,6 @@
 ---
-title: ""
-author: "Hayden Atchley"
+title: "Lab 5: Network Assignment and Validation"
+author: "Hayden Atchley, Steven Goodsell, Tristan Parker, Austin Nichalson"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 geometry: margin=1in
 output:
@@ -29,6 +29,58 @@ install_github("atchley-sha/R-packageSHA")
 library(packageSHA)
 ```
 
+```{r}
+rmse <- function(x,y){
+  if(length(x) == length(y)){
+   sqrt(sum((x-y)^2)/length(x)) 
+  } else{
+    "ERROR: The two vectors are not the same length"
+  }
+}
+
+prmse <- function(x,y){
+  if(length(x) == length(y)){
+   rmse(x,y) / mean(y) 
+  } else{
+    "ERROR: The two vectors are not the same length"
+  }
+}
+```
+
+
 \RaggedRight
 \graphicspath{ {./images/} }
 \captionsetup[table]{labelformat=empty}
+
+```{r}
+links <- read_csv("data/RMSE_Links.csv") %>%
+  mutate(error = Volume - Count,
+         pcterror = error/Count * 100)
+links %>%
+  group_by(`Fac Type Group`) %>%
+  summarise(rmse = rmse(Volume, Count),
+            prmse = prmse(Volume, Count) * 100)
+
+ggplot(links,
+       aes(x= Count, y = Volume, color = as.factor(`Fac Type Group`))) + 
+  geom_abline(slope = 1, intercept = 0, lty = "dotted") +
+  geom_point() + theme_bw()
+
+mdd <- tibble(
+  volume = c(1000, 2500, 5000, 10000, 25000, 50000, 70000),
+  mdd = c(0.9, 0.7, 0.5, 0.35, 0.25, 0.2, 0.10) * 100
+)
+
+# start the plot
+ggplot() + 
+  # add the MDD ribbon, with positive upside and negative downside 
+  geom_ribbon(
+    data = mdd %>% mutate(mdd1 = -1 * mdd),
+    aes(x = volume, ymax = mdd, ymin = mdd1), alpha = 0.2) + 
+  # add a horizontal line
+  geom_hline(yintercept = 0, lty = "dotted") +
+  # add the link percent error
+  geom_point(data = links, aes (x = Count, y = pcterror, color = factor(`Fac Type Group`))) + 
+  theme_bw()
+```
+
