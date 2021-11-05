@@ -71,6 +71,7 @@ We set up a matrix to solve the system of equations:
 \begin{equation*}
   \begin{blockarray}{ccccccccccc}
   q_{AD} & q_{AC} & q_{CD} & q_{BC} & q_{BD} & t_{AD} & t_{AC} & t_{CD} & t_{BC} & t_{BD} & = \\
+  \smallskip
   \begin{block}{[cccccccccc|c]}
   0.01   & 0      & 0      & 0      & 0      & -1     & 0      &  0     & 0      &  0     & -20 \topstrut\\
   0      & 0.005  & 0      & 0      & 0      & 0      & -1     &  0     & 0      &  0     & -10 \\
@@ -89,13 +90,17 @@ We set up a matrix to solve the system of equations:
 
 The first about half of these rows come from the trip time equations. The remaining rows come from the following equations:
 ```{=latex}
-\begin{align*}
+\begin{equation*}
+\begin{blockarray}
+\begin{block}{
  t_{AD} &= t_{AC} + t_{CD} \\
- t_{BD} &= t_{BC} + t_{CD} \\
+ t_{BD} &= t_{BC} + t_{CD} \Right{\}
+}
  q_{AD} + q_{AC} &= 7000 \\
  q_{BD} + q_{BC} &= 5000 \\
  q_{CD} &= q_{AC} + q_{BC}.
-\end{align*}
+\end{blockarray}
+\end{equation*}
 ```
 
 
