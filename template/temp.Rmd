@@ -7,7 +7,7 @@ output:
   pdf_document:
     latex_engine: lualatex
     includes:
-      in_header: "../template/preamble.tex"
+      in_header: "../preamble.tex"
 editor_options: 
   chunk_output_type: console
 ---
@@ -23,12 +23,12 @@ knitr::opts_chunk$set(
 ```{r load_packages, include=FALSE}
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
-  char = read.csv("../template/packages.csv", header = F)[,1]
+  char = as.character(read.csv("../packages.csv", header = F)[,1])
   )
-p_load_gh("atchley-sha/R-packageSHA")
+install_github("atchley-sha/R-packageSHA")
+library(packageSHA)
 ```
 
 \RaggedRight
 \graphicspath{ {./images/} }
 \captionsetup[table]{labelformat=empty}
-
