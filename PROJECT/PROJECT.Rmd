@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 ```{r load_packages, include=FALSE}
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
-  char = as.character(read.csv("../packages.csv", header = F)[,1])
+  char = as.character(read.csv("packages.csv", header = F)[,1])
   )
 install_github("atchley-sha/R-packageSHA")
 library(packageSHA)

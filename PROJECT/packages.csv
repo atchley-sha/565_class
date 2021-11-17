@@ -1,0 +1,11 @@
+devtools
+flextable
+kableExtra
+knitr
+magrittr
+pacman
+pracma
+tidyverse
+xtable
+scales
+foreign

@@ -1,6 +1,6 @@
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
-  char = as.character(read.csv("../packages.csv", header = F)[,1])
+  char = as.character(read.csv("packages.csv", header = F)[,1])
 )
 install_github("atchley-sha/R-packageSHA")
 library(packageSHA)
@@ -31,28 +31,57 @@ base <- fullBase %>%
   replace(is.na(.), 0) %>% 
   relocate(c(Z, ATYPE))
 
-sample_downtown <- function(base, frac){
+DTZones <- c(1,2,3,4,5,6,7,8,9,10)
+NCZones <- c(15,16,17)
+
+sample_downtown <- function(scen, frac, zones){
   
-  baseDT <- base %>% 
-    filter(Z %in% c(1,2,3,4,5))
+  scenDT <- scen %>% 
+    filter(Z %in% zones)
   
-  baseRU <- base %>% 
-    filter(!Z %in% c(1,2,3,4,5))
+  scenRU <- scen %>% 
+    filter(!Z %in% zones)
   
   additions <- colSums(
-    select(baseRU,
+    select(scenRU,
            !c(Z, ATYPE))
     ) * frac
   
-  baseDT[,3:length(colnames(baseDT))] <- 
-    baseDT[,3:length(colnames(baseDT))] +
-    (additions / nrow(baseDT))
+  scenDT[,3:length(colnames(scenDT))] <- 
+    scenDT[,3:length(colnames(scenDT))] +
+    (additions / nrow(scenDT))
   
-  baseRU[,3:length(colnames(baseRU))] <- 
-    baseRU[,3:length(colnames(baseRU))] * (1-frac)
+  scenRU[,3:length(colnames(scenRU))] <- 
+    scenRU[,3:length(colnames(scenRU))] * (1-frac)
   
-  rbind(baseDT, baseRU) %>% 
+  rbind(scenDT, scenRU) %>% 
     arrange(Z)
 }
 
-sample_downtown(base, 0.3)
+sample_nc <- function(scen, frac, zonesDT, zonesNC){
+  
+}
+
+popbaseDT <- base[1:10,] %>% 
+  colSums() %>% 
+  {.["POP"]}
+
+popbaseRU <- base[-(1:10),] %>% 
+  colSums() %>% 
+  {.["POP"]}
+
+popDT <- scenDT %>% 
+  colSums() %>% 
+  {.["POP"]}
+
+popRU <- scenRU %>% 
+  colSums() %>% 
+  {.["POP"]}
+
+pop0 <- popbaseDT + popbaseRU
+pop1 <- popDT + popRU
+
+pop0
+pop1
+
+pop1-pop0
