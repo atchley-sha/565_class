@@ -72,9 +72,42 @@ sample_downtown <- function(scen, frac, zones){
 
 sample_nc <- function(scen, frac, zonesDT, zonesNC){
   
+  scenDT <- scen %>% 
+    filter(Z %in% zonesDT)
+  
+  scenNC <- scen %>% 
+    filter(Z %in% zonesNC)
+  
+  scenRU <- scen %>% 
+    filter(!Z %in% zonesDT, !Z %in% zonesNC)
+  
+  additions <- colSums(
+    select(scenRU,
+           !c(Z, ATYPE))
+  ) * frac
+  
+  scenNC[,3:length(colnames(scenNC))] <- 
+    scenNC[,3:length(colnames(scenNC))] +
+    (
+      (additions / nrow(scenNC)) %>% 
+        {.[col(
+          scenNC %>%
+            select(3:length(colnames(scenNC))))]
+        }
+    )
+  
+  scenRU[,3:length(colnames(scenRU))] <- 
+    scenRU[,3:length(colnames(scenRU))] * (1-frac)
+  
+  rbind(scenDT, scenNC, scenRU) %>% 
+    arrange(Z)
 }
 
 DTscen <- sample_downtown(base, 0.3, DTZones) %>% 
-  as.data.frame
+  as.data.frame()
+
+NCscen <- sample_nc(base, 0.3, DTZones, NCZones) %>% 
+  as.data.frame()
 
 write.dbf(DTscen, "data/se_downtown.dbf")
+write.dbf(NCscen, "data/se_neighborhood.dbf")
