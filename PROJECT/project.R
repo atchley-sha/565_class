@@ -31,7 +31,13 @@ base <- fullBase %>%
   replace(is.na(.), 0) %>% 
   relocate(c(Z, ATYPE))
 
-DTZones <- c(1,2,3,4,5,6,7,8,9,10)
+DTZones <- c(88,89,90,91,92,
+             93,102,117,118,119,
+             126,127,128,129,130,
+             131,132,133,134,145,
+             195,196,197,198,200,
+             201)
+
 NCZones <- c(15,16,17)
 
 sample_downtown <- function(scen, frac, zones){
@@ -49,7 +55,13 @@ sample_downtown <- function(scen, frac, zones){
   
   scenDT[,3:length(colnames(scenDT))] <- 
     scenDT[,3:length(colnames(scenDT))] +
-    (additions / nrow(scenDT))
+    (
+      (additions / nrow(scenDT)) %>% 
+        {.[col(
+          scenDT %>%
+            select(3:length(colnames(scenDT))))]
+        }
+    )
   
   scenRU[,3:length(colnames(scenRU))] <- 
     scenRU[,3:length(colnames(scenRU))] * (1-frac)
@@ -62,26 +74,7 @@ sample_nc <- function(scen, frac, zonesDT, zonesNC){
   
 }
 
-popbaseDT <- base[1:10,] %>% 
-  colSums() %>% 
-  {.["POP"]}
+DTscen <- sample_downtown(base, 0.3, DTZones) %>% 
+  as.data.frame
 
-popbaseRU <- base[-(1:10),] %>% 
-  colSums() %>% 
-  {.["POP"]}
-
-popDT <- scenDT %>% 
-  colSums() %>% 
-  {.["POP"]}
-
-popRU <- scenRU %>% 
-  colSums() %>% 
-  {.["POP"]}
-
-pop0 <- popbaseDT + popbaseRU
-pop1 <- popDT + popRU
-
-pop0
-pop1
-
-pop1-pop0
+write.dbf(DTscen, "data/se_downtown.dbf")
