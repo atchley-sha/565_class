@@ -1,11 +1,13 @@
+data.table
 devtools
 flextable
+foreign
 kableExtra
 knitr
 magrittr
+namer
 pacman
 pracma
+scales
 tidyverse
 xtable
-scales
-foreign
