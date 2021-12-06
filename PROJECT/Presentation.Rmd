@@ -125,11 +125,12 @@ plot_differences(NBNC, name = "Volume more than No-Build")
 
 ## Downtown (percent)
 
+### Non-outliers
 ```{r}
 plot_differences(filter(NBDTP,
                         DIFF >= boxplot.stats(NBDTP$DIFF)$stats[1],
                         DIFF <= boxplot.stats(NBDTP$DIFF)$stats[5]),
-                 name = "Percent volume more than No-Build")
+                 name = "Times volume more than No-Build")
 ```
 
 ## Downtown (percent)
@@ -138,16 +139,17 @@ plot_differences(filter(NBDTP,
 ```{r}
 plot_differences(filter(NBDTP,
                         DIFF >= boxplot.stats(NBDTP$DIFF)$stats[5]),
-                 name = "Percent volume more than No-Build")
+                 name = "Times volume more than No-Build")
 ```
 
 ## Neighborhood Centers (percent)
 
+### Non-outliers
 ```{r}
 plot_differences(filter(NBNCP,
                         DIFF >= boxplot.stats(NBDTP$DIFF)$stats[1],
                         DIFF <= boxplot.stats(NBDTP$DIFF)$stats[5]),
-                 name = "Percent volume more than No-Build")
+                 name = "Times volume more than No-Build")
 ```
 
 ## Neighborhood Centers (percent)
@@ -156,5 +158,5 @@ plot_differences(filter(NBNCP,
 ```{r}
 plot_differences(filter(NBNCP,
                         DIFF >= boxplot.stats(NBDTP$DIFF)$stats[5]),
-                 name = "Percent volume more than No-Build")
+                 name = "Times volume more than No-Build")
 ```
