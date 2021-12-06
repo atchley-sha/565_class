@@ -28,7 +28,7 @@ noBuild$VOL_CAT %<>%
 ggplot(noBuild) +
   geom_sf(aes(color = VOL_CAT), size = 1.5) +
   theme_void() +
-  scale_color_manual(values = colorRampPalette(c("lightblue", "darkred"), bias = 2)(5)) +
+  scale_color_manual(values = colorRampPalette(c("lightblue", "darkred"))(5)) +
   labs(color = "Total Volume")
 
 
@@ -42,5 +42,5 @@ DT30$VOL_CAT %<>%
 ggplot(DT30) +
   geom_sf(aes(color = VOL_CAT), size = 1.5) +
   theme_void() +
-  scale_color_manual(values = colorRampPalette(c("lightblue", "darkred"), bias = 2)(5)) +
+  scale_color_manual(values = colorRampPalette(c("lightblue", "darkred"))(5)) +
   labs(color = "Total Volume")

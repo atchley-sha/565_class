@@ -1,0 +1,160 @@
+---
+title: "565 Presentation"
+author: "Hayden Atchley, Tristan Parker, Steven Goodsell, Austin Nichalson"
+date: "12/8/2021"
+output:
+  ioslides_presentation:
+    transition: faster
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r load_packages, include=FALSE}
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(
+  char = as.character(read.csv("packages.csv", header = F)[,1])
+)
+install_github("atchley-sha/R-packageSHA")
+library(packageSHA)
+```
+
+```{r load_functions, include=FALSE}
+source("R/functions.R")
+```
+
+## Scenarios
+
+- No build 2040
+- 30% move downtown
+- 30% move to "neighborhood centers"
+
+
+## SE Data: No-Build
+
+```{r}
+#TAZ by population
+#TAZ by jobs
+```
+
+
+## SE Data: Downtown
+
+```{r}
+#TAZ by population
+#TAZ by jobs
+```
+
+
+## SE Data: Neighborhood Centers
+
+```{r}
+#TAZ by population
+#TAZ by jobs
+```
+
+
+# Outputs #####################################################
+
+
+## Mode Choice
+
+```{r}
+
+```
+
+
+## Congestion: No-Build
+
+```{r load_data_congestion}
+noBuild <- read_sf("data/loaded_networks/NoBuild.shp")
+DT30 <- read_sf("data/loaded_networks/DT30.shp")
+NC30 <- read_sf("data/loaded_networks/NC30.shp")
+
+breaks <- get_breaks(noBuild)$breaks
+labels <- get_breaks(noBuild)$labels
+```
+
+```{r}
+plot_congestion(noBuild, breaks, labels)
+```
+
+## Congeestion: Downtown
+
+```{r}
+plot_congestion(DT30, breaks, labels)
+```
+
+## Congestion: Neighborhood Centers
+
+```{r}
+plot_congestion(NC30, breaks, labels)
+```
+
+# Congetsion Differences ###############################
+
+```{r}
+NBDT <- calculate_differences(new = DT30)
+NBNC <- calculate_differences(new = NC30)
+
+NBDTP <- calculate_differences(new = DT30, pct = T)
+NBNCP <- calculate_differences(new = NC30, pct = T)
+```
+
+
+## Downtown
+
+```{r}
+plot_differences(NBDT, name = "Volume more than No-Build")
+```
+
+
+## Neighborhood Centers
+
+```{r}
+plot_differences(NBNC, name = "Volume more than No-Build")
+```
+
+
+## Downtown (percent)
+
+```{r}
+plot_differences(filter(NBDTP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[1],
+                        DIFF <= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Percent volume more than No-Build")
+```
+
+## Downtown (percent)
+
+### Outliers
+```{r}
+plot_differences(filter(NBDTP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Percent volume more than No-Build")
+```
+
+## Neighborhood Centers (percent)
+
+```{r}
+plot_differences(filter(NBNCP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[1],
+                        DIFF <= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Percent volume more than No-Build")
+```
+
+## Neighborhood Centers (percent)
+
+### Outliers
+```{r}
+plot_differences(filter(NBNCP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Percent volume more than No-Build")
+```
