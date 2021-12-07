@@ -30,16 +30,7 @@ library(packageSHA)
 source("R/functions.R")
 ```
 
-```{r}
-#Line size
-size = 1.5
-```
-
-## Question
-
-Densify!
-
-### Scenarios
+## Scenarios
 
 - No build 2040
 - 30% move downtown
@@ -49,34 +40,8 @@ Densify!
 ## SE Data: No-Build
 
 ```{r}
-senb <- read.dbf("data/se/se_classified_2040_NO-BUILD.dbf") %>% 
-  as_tibble() %>% 
-  select(Z, POP, WORK)
-sedt <- read.dbf("data/se/se_downtown30.dbf") %>% 
-  as_tibble() %>% 
-  select(Z, POP, WORK)
-senc <- read.dbf("data/se/se_neighborhood30.dbf") %>% 
-  as_tibble() %>% 
-  select(Z, POP, WORK)
-
-TAZ <- read_sf("data/TAZ/RoanokeTAZ.shp") %>% 
-  select(ZONE)
-
-maxpop <- max(c(senb$POP, sedt$POP, senc$POP))
-maxwork <- max(c(senb$WORK, sedt$WORK, senc$WORK))
-```
-
-
-```{r}
 #TAZ by population
-TAZNB <- left_join(TAZ, senb, by = c("ZONE" = "Z"))
-
-TAZNB %>% 
-  ggplot() +
-  geom_sf(aes(fill = POP)) +
-  theme_void() +
-  scale_fill_gradient(limits = c(0, maxpop), low = "lightblue", high = "red")
-#TAZ by jobs?
+#TAZ by jobs
 ```
 
 
@@ -84,14 +49,7 @@ TAZNB %>%
 
 ```{r}
 #TAZ by population
-TAZDT <- left_join(TAZ, sedt, by = c("ZONE" = "Z"))
-
-TAZDT %>% 
-  ggplot() +
-  geom_sf(aes(fill = POP)) +
-  theme_void() +
-  scale_fill_gradient(limits = c(0, maxpop), low = "lightblue", high = "red")
-#TAZ by jobs?
+#TAZ by jobs
 ```
 
 
@@ -99,14 +57,7 @@ TAZDT %>%
 
 ```{r}
 #TAZ by population
-TAZNC <- left_join(TAZ, senc, by = c("ZONE" = "Z"))
-
-TAZNC %>% 
-  ggplot() +
-  geom_sf(aes(fill = POP)) +
-  theme_void() +
-  scale_fill_gradient(limits = c(0, maxpop), low = "lightblue", high = "red")
-#TAZ by jobs?
+#TAZ by jobs
 ```
 
 
@@ -116,21 +67,7 @@ TAZNC %>%
 ## Mode Choice
 
 ```{r}
-modeChoice <- read_csv("data/modeChoice.csv")
 
-modeChoice$scenario %<>%
-  as.factor() %>% 
-  recode_factor("2040 Base" = "No-Build") %>% 
-  fct_relevel("Neighborhood Centers", "Downtown", "No-Build") 
-  
-
-ggplot(modeChoice) +
-  geom_bar(aes(x = trips, y = scenario, fill = mode),
-           stat = "identity",
-           position = "fill") +
-  xlab("Proportion of Trips") +
-  ylab("") +
-  labs(fill = "Mode")
 ```
 
 
@@ -152,7 +89,7 @@ colors <- colorRampPalette(c("lightblue", "darkred"))(5)
 ```{r}
 categorize_congestion(noBuild, breaks, labels) %>% 
   ggplot() +
-  geom_sf(aes(color = VOL_CAT), size = size) +
+  geom_sf(aes(color = VOL_CAT), size = 1.5) +
   theme_void() +
   scale_color_manual(values = colors) +
   labs(color = "Total Volume")
@@ -163,7 +100,7 @@ categorize_congestion(noBuild, breaks, labels) %>%
 ```{r}
 categorize_congestion(DT30, breaks, labels) %>% 
   ggplot() +
-  geom_sf(aes(color = VOL_CAT), size = size) +
+  geom_sf(aes(color = VOL_CAT), size = 1.5) +
   theme_void() +
   scale_color_manual(values = colors) +
   labs(color = "Total Volume")
@@ -174,14 +111,14 @@ categorize_congestion(DT30, breaks, labels) %>%
 ```{r}
 categorize_congestion(NC30, breaks, labels) %>% 
   ggplot() +
-  geom_sf(aes(color = VOL_CAT), size = size) +
+  geom_sf(aes(color = VOL_CAT), size = 1.5) +
   theme_void() +
   scale_color_manual(values = colors) +
   labs(color = "Total Volume")
 ```
 
 
-## V/C: No-Build
+## V/c: No-Build
 
 ```{r}
 limits <- c(min = 0, max = 1.5)
@@ -191,47 +128,89 @@ breaks <- c(1,2,3,4,5)*0.25
 
 ```{r}
 ggplot(noBuild) +
-  geom_sf(aes(color = PM_VC), size = size) +
+  geom_sf(aes(color = PM_VC), size = 1.5) +
   theme_void() +
   scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks)
 ```
 
-## V/C: Downtown
+## V/c: Downtown
 
 ```{r}
 ggplot(DT30) +
-  geom_sf(aes(color = PM_VC), size = size) +
+  geom_sf(aes(color = PM_VC), size = 1.5) +
   theme_void() +
   scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks)
 ```
 
-## V/C: Neighborhood Centers
+## V/c: Neighborhood Centers
 
 ```{r}
 ggplot(NC30) +
-  geom_sf(aes(color = PM_VC), size = size) +
+  geom_sf(aes(color = PM_VC), size = 1.5) +
   theme_void() +
   scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks)
 ```
 
 
-## V/C Difference from No-Build: Downtown
+# Congetsion Differences ###############################
 
 ```{r}
-calculate_differences(new = DT30, col = PM_VC) %>% 
-  ggplot() +
-  geom_sf(aes(color = DIFF), size = size) +
-  theme_void() +
-  scale_color_gradient2(low = "blue", mid = "gray80", high = "red")
+NBDT <- calculate_differences(new = DT30)
+NBNC <- calculate_differences(new = NC30)
+
+NBDTP <- calculate_differences(new = DT30, pct = T)
+NBNCP <- calculate_differences(new = NC30, pct = T)
 ```
 
-## V/C Difference from No-Build: Downtown
+
+## Downtown
 
 ```{r}
-calculate_differences(new = NC30, col = PM_VC) %>% 
-  ggplot() +
-  geom_sf(aes(color = DIFF), size = size) +
-  theme_void() +
-  scale_color_gradient2(low = "blue", mid = "gray80", high = "red")
+plot_differences(NBDT, name = "Volume more than No-Build")
 ```
 
+
+## Neighborhood Centers
+
+```{r}
+plot_differences(NBNC, name = "Volume more than No-Build")
+```
+
+
+## Downtown (percent)
+
+### Non-outliers
+```{r}
+plot_differences(filter(NBDTP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[1],
+                        DIFF <= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Times volume more than No-Build")
+```
+
+## Downtown (percent)
+
+### Outliers
+```{r}
+plot_differences(filter(NBDTP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Times volume more than No-Build")
+```
+
+## Neighborhood Centers (percent)
+
+### Non-outliers
+```{r}
+plot_differences(filter(NBNCP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[1],
+                        DIFF <= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Times volume more than No-Build")
+```
+
+## Neighborhood Centers (percent)
+
+### Outliers
+```{r}
+plot_differences(filter(NBNCP,
+                        DIFF >= boxplot.stats(NBDTP$DIFF)$stats[5]),
+                 name = "Times volume more than No-Build")
+```

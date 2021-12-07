@@ -1,5 +1,5 @@
 #Calculate breaks
-calculate_breaks <- function(sf, n = 5, col = TOTAL_VOL, style = "quantile"){
+calculate_breaks <- function(sf, n = 5, col = TOTAL_VOL, style = "quantile", round = 500){
   
   col = enquo(arg = col)
   
@@ -10,16 +10,16 @@ calculate_breaks <- function(sf, n = 5, col = TOTAL_VOL, style = "quantile"){
     unname() %>% 
     classIntervals(n = n, style = style) %>% 
     {.$brks} %>% 
-    {if_else(. > 10000, round_any(., 1000), round_any(., 500))}
+    {if_else(. > 10000, round_any(., 1000), round_any(., round))}
 
 }
 
 #Return breaks and labels
-get_breaks <- function(sf, n = 5, col = TOTAL_VOL, style = "quantile"){
+get_breaks <- function(sf, n = 5, col = TOTAL_VOL, style = "quantile", round = 500){
   
   col = enquo(arg = col)
   
-  breaks <- calculate_breaks(sf = sf, n = n, col = !!col, style = style)
+  breaks <- calculate_breaks(sf = sf, n = n, col = !!col, style = style, round = round)
   
   labels <- vector()
   for(i in 1:(length(breaks) - 1)){
@@ -37,7 +37,23 @@ get_breaks <- function(sf, n = 5, col = TOTAL_VOL, style = "quantile"){
 
 
 #Plot congestion mapping
-plot_congestion <- function(sf, breaks, labels){
+# plot_congestion <- function(sf, breaks, labels){
+#   
+#   sf %<>%
+#     mutate(VOL_CAT = cut(TOTAL_VOL + 0.001, breaks))
+#   
+#   sf$VOL_CAT %<>%
+#     {`levels<-`(., labels)}
+#   
+#   ggplot(sf) +
+#     geom_sf(aes(color = VOL_CAT), size = 1.5) +
+#     theme_void() +
+#     scale_color_manual(values = colorRampPalette(c("lightblue", "darkred"))(5)) +
+#     labs(color = "Total Volume")
+#   
+# }
+
+categorize_congestion <- function(sf, breaks, labels){
   
   sf %<>%
     mutate(VOL_CAT = cut(TOTAL_VOL + 0.001, breaks))
@@ -45,11 +61,7 @@ plot_congestion <- function(sf, breaks, labels){
   sf$VOL_CAT %<>%
     {`levels<-`(., labels)}
   
-  ggplot(sf) +
-    geom_sf(aes(color = VOL_CAT), size = 1.5) +
-    theme_void() +
-    scale_color_manual(values = colorRampPalette(c("lightblue", "darkred"))(5)) +
-    labs(color = "Total Volume")
+  sf
   
 }
 
