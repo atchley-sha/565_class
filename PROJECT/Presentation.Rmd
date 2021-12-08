@@ -35,9 +35,11 @@ source("R/functions.R")
 size = 1.5
 ```
 
-## Question
+## Question {.build}
 
 Would densifying the population mitigate problems like congestion and encourage multi-modal transportation?
+
+<div>
 
 ### Scenarios
 
@@ -45,6 +47,7 @@ Would densifying the population mitigate problems like congestion and encourage 
 - 30% move downtown
 - 30% move to "neighborhood centers"
 
+</div>
 
 ## SE Data: No-Build
 
@@ -239,7 +242,9 @@ calculate_differences(new = NC30, col = PM_VC) %>%
 ```
 
 
-# Conclusions
+## Conclusions
 
-
+- Downtown seems best
+- Multimodal use, lower emissions
+- Further research on transit/land use changes
 
