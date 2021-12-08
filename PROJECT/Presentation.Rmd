@@ -37,7 +37,7 @@ size = 1.5
 
 ## Question
 
-Densify!
+Would densifying the population mitigate problems like congestion and encourage multi-modal transportation?
 
 ### Scenarios
 
@@ -134,7 +134,7 @@ ggplot(modeChoice) +
 ```
 
 
-## Congestion: No-Build
+## Volume: No-Build
 
 ```{r load_data_congestion}
 noBuild <- read_sf("data/loaded_networks/NoBuild.shp")
@@ -158,7 +158,7 @@ categorize_congestion(noBuild, breaks, labels) %>%
   labs(color = "Total Volume")
 ```
 
-## Congestion: Downtown
+## Volume: Downtown
 
 ```{r}
 categorize_congestion(DT30, breaks, labels) %>% 
@@ -169,7 +169,7 @@ categorize_congestion(DT30, breaks, labels) %>%
   labs(color = "Total Volume")
 ```
 
-## Congestion: Neighborhood Centers
+## Volume: Neighborhood Centers
 
 ```{r}
 categorize_congestion(NC30, breaks, labels) %>% 
@@ -181,7 +181,7 @@ categorize_congestion(NC30, breaks, labels) %>%
 ```
 
 
-## V/C: No-Build
+## Congestion: No-Build
 
 ```{r}
 limits <- c(min = 0, max = 1.5)
@@ -193,25 +193,28 @@ breaks <- c(1,2,3,4,5)*0.25
 ggplot(noBuild) +
   geom_sf(aes(color = PM_VC), size = size) +
   theme_void() +
-  scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks)
+  scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks) +
+  labs(color = "PM V/C Ratio")
 ```
 
-## V/C: Downtown
+## Congestion: Downtown
 
 ```{r}
 ggplot(DT30) +
   geom_sf(aes(color = PM_VC), size = size) +
   theme_void() +
-  scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks)
+  scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks) +
+  labs(color = "PM V/C Ratio")
 ```
 
-## V/C: Neighborhood Centers
+## Congestion: Neighborhood Centers
 
 ```{r}
 ggplot(NC30) +
   geom_sf(aes(color = PM_VC), size = size) +
   theme_void() +
-  scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks)
+  scale_color_steps(low = "lightblue", high = "red", limits = limits, breaks = breaks) +
+  labs(color = "PM V/C Ratio")
 ```
 
 
@@ -225,7 +228,7 @@ calculate_differences(new = DT30, col = PM_VC) %>%
   scale_color_gradient2(low = "blue", mid = "gray80", high = "red")
 ```
 
-## V/C Difference from No-Build: Downtown
+## V/C Difference from No-Build: Neighborhood Centers
 
 ```{r}
 calculate_differences(new = NC30, col = PM_VC) %>% 
@@ -234,4 +237,9 @@ calculate_differences(new = NC30, col = PM_VC) %>%
   theme_void() +
   scale_color_gradient2(low = "blue", mid = "gray80", high = "red")
 ```
+
+
+# Conclusions
+
+
 
