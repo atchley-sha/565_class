@@ -1,6 +1,6 @@
 ---
-title: ""
-author: "Hayden Atchley"
+title: "Population and Job Densification in Roanoke"
+author: "Hayden Atchley, Steven Goodsell, Austin Nichalson, Tristan Parker"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 geometry: margin=1in
 output:
@@ -25,6 +25,8 @@ if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
   char = as.character(read.csv("packages.csv", header = F)[,1])
   )
+install_github("coolbutuseless/ggpattern")
+library(ggpattern)
 install_github("atchley-sha/R-packageSHA")
 library(packageSHA)
 ```
@@ -36,4 +38,42 @@ source("R/functions.R")
 
 \RaggedRight
 \graphicspath{ {./images/} }
-\captionsetup[table]{labelformat=empty}
+<!-- \captionsetup[table]{labelformat=empty} -->
+
+# Introduction
+
+Would densifying Roanoke’s population and jobs in certain locations encourage multi-modal transportation and reduce problems like congestion? To seek answers to this question, our team used a trip-based model and changed the land-use inputs in the model by editing the projected 2040 social economic (SE) data. This allowed us to see how localizing population and job growth in the downtown area compares with the no-build 2040 scenario. We also wished to look at the effects of densifying "neighborhood centers" in comparison with the no-build scenario. We seek to identify if one or both of these land use policy changes would affect mode choice and traffic congestion, and to make a recommendation based on our findings.
+
+# Proposed Scenarios
+
+Our first scenario is the projected "no-build" 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered "downtown", as well as those we considered "neighborhood centers". We mainly looked at the population densities to determine these TAZs, but we adjusted our selections slightly to preserve continuity and cohesiveness. The population densities and selected TAZs are shown in Figure \@ref(fig:populationDensity).
+
+```{r populationDensity fig.cap="Population density and selected TAZs Downtown and Neighborhood Centers.}
+#Set downtown zone IDs
+DTZones <- c(88,89,90,91,92,
+             93,102,117,118,119,
+             126,127,128,129,130,
+             131,132,133,134,145,
+             195,196,197,198,200,
+             201)
+
+#Set neighborhood centers zone IDs
+NCZones <- c(42,66,97,148,149,
+             160,161,176,177,178,
+             179,180,181)
+
+TAZsf <- read_sf("data/TAZ/RoanokeTAZ.shp") %>% 
+  mutate(type = case_when(
+    ID %in% DTZones ~ "Downtown",
+    ID %in% NCZones ~ "Neighborhood Center",
+    TRUE ~ "Rural"
+  ))
+
+ggplot(TAZsf) +
+  geom_sf_pattern(aes(fill = POP, pattern = type),
+                  pattern_density = 0.35,
+                  pattern_fill = 'black',
+                  pattern_colour = 'black')
+
+```
+
