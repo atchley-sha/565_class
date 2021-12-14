@@ -14,7 +14,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-	echo = TRUE,
+	echo = FALSE,
 	message = FALSE,
 	warning = FALSE
 )
@@ -25,8 +25,6 @@ if(!require(pacman)) install.packages("pacman")
 pacman::p_load(
   char = as.character(read.csv("packages.csv", header = F)[,1])
   )
-install_github("coolbutuseless/ggpattern")
-library(ggpattern)
 install_github("atchley-sha/R-packageSHA")
 library(packageSHA)
 ```
@@ -49,6 +47,7 @@ Would densifying Roanoke’s population and jobs in certain locations encourage 
 Our first scenario is the projected "no-build" 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered "downtown", as well as those we considered "neighborhood centers". We mainly looked at the population densities to determine these TAZs, but we adjusted our selections slightly to preserve continuity and cohesiveness. The population densities and selected TAZs are shown in Figure \@ref(fig:populationDensity).
 
 ```{r populationDensity fig.cap="Population density and selected TAZs Downtown and Neighborhood Centers.}
+
 #Set downtown zone IDs
 DTZones <- c(88,89,90,91,92,
              93,102,117,118,119,
@@ -63,17 +62,43 @@ NCZones <- c(42,66,97,148,149,
              179,180,181)
 
 TAZsf <- read_sf("data/TAZ/RoanokeTAZ.shp") %>% 
-  mutate(type = case_when(
-    ID %in% DTZones ~ "Downtown",
-    ID %in% NCZones ~ "Neighborhood Center",
-    TRUE ~ "Rural"
-  ))
+  select(ID, ZONE, N)
 
-ggplot(TAZsf) +
-  geom_sf_pattern(aes(fill = POP, pattern = type),
-                  pattern_density = 0.35,
-                  pattern_fill = 'black',
-                  pattern_colour = 'black')
+TAZdbf <- read.dbf("data/se/se_classified_2040_NO-BUILD.dbf") %>% 
+  mutate(type = case_when(Z %in% DTZones ~ "Downtown",
+                          Z %in% NCZones ~ "Neighborhood Center",
+                          TRUE ~ "Rural") %>% 
+           as.factor() %>% 
+           fct_relevel(
+             "Rural",
+             "Neighborhood Center",
+             "Downtown"
+           )) %>% 
+  select(Z, type)
+
+TAZtype <- read.dbf("data/ZONAL AT2040A.DBF")
+
+TAZ <- left_join(TAZsf, TAZtype, by = c("N" = "N")) %>% 
+  left_join(TAZdbf, by = c("N" = "Z"))
+
+TAZ$ATYPE <-  factor(
+  TAZ$ATYPE,
+  labels = c("2 - Urban",
+             "3 - Exurban",
+             "4 - Suburban",
+             "5 - Rural"))
+
+
+# fillColors <- colorRampPalette(c("red", "lightblue"))(4)
+fillColors <- brewer.pal(4, "BuPu") %>% rev()
+colorColors <- c("grey60", "black", "yellow")
+
+ggplot(TAZ) +
+  geom_sf(aes(fill = ATYPE, color = type), size = 1) +
+  theme_void() +
+  scale_fill_manual(values = fillColors) +
+  scale_color_manual(values = colorColors)
 
 ```
+
 
