@@ -52,9 +52,8 @@ Our first scenario is the projected "no-build" 2040 scenario, as given already i
 DTZones <- c(88,89,90,91,92,
              93,102,117,118,119,
              126,127,128,129,130,
-             131,132,133,134,145,
-             195,196,197,198,200,
-             201)
+             131,132,133,134,196,
+             197,198,200,201)
 
 #Set neighborhood centers zone IDs
 NCZones <- c(42,66,97,148,149,
@@ -79,7 +78,7 @@ TAZdbf <- read.dbf("data/se/se_classified_2040_NO-BUILD.dbf") %>%
 TAZtype <- read.dbf("data/ZONAL AT2040A.DBF")
 
 TAZ <- left_join(TAZsf, TAZtype, by = c("N" = "N")) %>% 
-  left_join(TAZdbf, by = c("N" = "Z"))
+  left_join(TAZdbf, by = c("ZONE" = "Z"))
 
 TAZ$ATYPE <-  factor(
   TAZ$ATYPE,
@@ -88,16 +87,25 @@ TAZ$ATYPE <-  factor(
              "4 - Suburban",
              "5 - Rural"))
 
+TAZsplit <- TAZ %>% 
+  group_by(type) %>% 
+  group_split()
 
-# fillColors <- colorRampPalette(c("red", "lightblue"))(4)
-fillColors <- brewer.pal(4, "BuPu") %>% rev()
-colorColors <- c("grey60", "black", "yellow")
+fillColors <- brewer.pal(4, "Oranges") %>% rev()
+colorColors <- c("grey60", "black", "blue")
 
 ggplot(TAZ) +
-  geom_sf(aes(fill = ATYPE, color = type), size = 1) +
+  geom_sf(aes(fill = ATYPE, color = type)) +
   theme_void() +
   scale_fill_manual(values = fillColors) +
-  scale_color_manual(values = colorColors)
+  scale_color_manual(values = colorColors) +
+  guides(color = guide_legend(override.aes = list(size = 1))) +
+  geom_sf(data = TAZsplit[[2]], fill = NA, color = colorColors[2], size = 1) +
+  geom_sf(data = TAZsplit[[3]], fill = NA, color = colorColors[3], size = 1) +
+  labs(
+    fill = "Area Type",
+    color = "Designation"
+  )
 
 ```
 
