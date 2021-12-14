@@ -43,16 +43,19 @@ Would densifying Roanoke’s population and jobs in certain locations encourage 
 
 # Proposed Scenarios
 
-Our first scenario is the projected "no-build" 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered "downtown", as well as those we considered "neighborhood centers". We mainly looked at the Area Type as given in the input data to determine these TAZs, but we adjusted our selections slightly to preserve continuity and cohesiveness. The population densities and selected TAZs are shown in Figure \@ref(fig:populationDensity).
+Our first scenario is the projected "No-Build" 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered "Downtown", as well as those we considered "Neighborhood Centers". We mainly looked at the Area Type as given in the input data to determine these TAZs (with Downtown being urban and Neighborhood Centers being Exurban), but we adjusted our selections slightly to preserve continuity and cohesiveness. The area types and selected TAZs are shown in Figure \@ref(fig:TAZTypes).
 
-```{r populationDensity, fig.cap="Population density and selected TAZs Downtown and Neighborhood Centers."}
+As a side note, this figure shows that we had one obviously erroneous zone designated as Downtown. This is likely due to the fact that the TAZ data has three almost identical identification columns, and we may have mismatched them when combining the various input data files. This was an oversight on our part, but we unfortunately did not have time to fix the error. Most of the findings should still be roughly accurate, however, as only a couple of zones were affected.
+
+```{r TAZTypes, fig.cap="Population density and selected TAZs for Downtown and Neighborhood Centers scenarios."}
 
 #Set downtown zone IDs
 DTZones <- c(88,89,90,91,92,
              93,102,117,118,119,
              126,127,128,129,130,
-             131,132,133,134,196,
-             197,198,200,201)
+             131,132,133,134,145,
+             195,196,197,198,200,
+             201)
 
 #Set neighborhood centers zone IDs
 NCZones <- c(42,66,97,148,149,
@@ -63,8 +66,8 @@ TAZsf <- read_sf("data/TAZ/RoanokeTAZ.shp") %>%
   select(ID, ZONE, N)
 
 TAZdbf <- read.dbf("data/se/se_classified_2040_NO-BUILD.dbf") %>% 
-  mutate(type = case_when(Z %in% DTZones ~ "Downtown",
-                          Z %in% NCZones ~ "Neighborhood Center",
+  mutate(designation = case_when(Z %in% DTZones ~ "Downtown",
+                          Z %in% NCZones ~ "Neighborhood Centers",
                           TRUE ~ "Rural") %>% 
            as.factor() %>% 
            fct_relevel(
@@ -72,7 +75,7 @@ TAZdbf <- read.dbf("data/se/se_classified_2040_NO-BUILD.dbf") %>%
              "Neighborhood Center",
              "Downtown"
            )) %>% 
-  select(Z, type)
+  select(Z, designation)
 
 TAZtype <- read.dbf("data/ZONAL AT2040A.DBF")
 
@@ -87,7 +90,7 @@ TAZ$ATYPE <-  factor(
              "5 - Rural"))
 
 TAZsplit <- TAZ %>% 
-  group_by(type) %>% 
+  group_by(designation) %>% 
   group_split()
 
 fillColors <- brewer.pal(4, "Oranges") %>% rev()
@@ -95,7 +98,7 @@ colorColors <- c("grey60", "blue", "black")
 borderSize <- 0.7
 
 ggplot(TAZ) +
-  geom_sf(aes(fill = ATYPE, color = type)) +
+  geom_sf(aes(fill = ATYPE, color = designation)) +
   theme_void() +
   scale_fill_manual(values = fillColors) +
   scale_color_manual(values = colorColors) +
@@ -109,4 +112,56 @@ ggplot(TAZ) +
 
 ```
 
+To create the other scenarios, we adjusted the No-Build socioeconomic input data by moving 30% of the population, jobs, etc. from the rural areas to the downtown and neighborhood centers areas, respectively. Figure \@ref(fig:populationMap) shows the No-Build population and employment density by TAZ, and Figures \@ref(fig:DTPOPDiff) and \@ref(NCPOPDiff) show the change from the No-Build scenario.
 
+```{r loadSEData}
+senb <- read.dbf("data/se/se_classified_2040_NO-BUILD.dbf") %>% 
+  as_tibble() %>% 
+  select(Z, POP, WORK) %>% 
+  mutate(total = POP + WORK)
+sedt <- read.dbf("data/se/se_downtown30.dbf") %>% 
+  as_tibble() %>% 
+  select(Z, POP, WORK) %>% 
+  mutate(total = POP + WORK) %>% 
+  calculate_differences(col = total, base = senb)
+senc <- read.dbf("data/se/se_neighborhood30.dbf") %>% 
+  as_tibble() %>% 
+  select(Z, POP, WORK) %>% 
+  mutate(total = POP + WORK) %>% 
+  calculate_differences(col = total, base = senb)
+
+TAZ <- read_sf("data/TAZ/RoanokeTAZ.shp") %>% 
+  select(ID, ZONE, N)
+
+```
+
+```{r populationMap, fig.cap="Population by TAZ in No-Build scenario."}
+TAZNB <- left_join(TAZ, senb, by = c("ZONE" = "Z"))
+
+TAZNB %>% 
+  ggplot() +
+  geom_sf(aes(fill = total)) +
+  theme_void() +
+  scale_fill_gradient(low = "lightblue", high = "red") +
+  labs(fill = "Population\n+ Employment")
+```
+
+```{r DTPOPDiff, fig.cap="Population difference in Downtown scenario from No-Build."}
+TAZDT <- left_join(TAZ, sedt, by = c("ZONE" = "Z"))
+
+ggplot(TAZDT) +
+  geom_sf(aes(fill = DIFF)) +
+  theme_void() +
+  scale_fill_gradient2(low = "blue", mid = "gray80", high = "red") +
+  labs(fill = "Population Difference\nfrom No-Build")
+```
+
+```{r NCPOPDiff, fig.cap="Population difference in Neighborhood Centers scenario from No-Build."}
+TAZNC <- left_join(TAZ, senc, by = c("ZONE" = "Z"))
+
+ggplot(TAZNC) +
+  geom_sf(aes(fill = DIFF)) +
+  theme_void() +
+  scale_fill_gradient2(low = "blue", mid = "gray80", high = "red") +
+  labs(fill = "Population Difference\nfrom No-Build")
+```

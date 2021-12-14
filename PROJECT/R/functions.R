@@ -67,7 +67,7 @@ categorize_congestion <- function(sf, breaks, labels){
 
 
 #Calculate differences in congestion
-calculate_differences <- function(base = noBuild, new, col = TOTAL_VOL, pct = F){
+calculate_differences <- function(new, base = noBuild, col = TOTAL_VOL, pct = F){
   
   col = enquo(arg = col)
   
