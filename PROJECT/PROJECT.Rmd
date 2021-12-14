@@ -7,7 +7,7 @@ output:
   pdf_document:
     latex_engine: lualatex
     includes:
-      in_header: "../preamble.tex"
+      in_header: "preamble.tex"
 editor_options: 
   chunk_output_type: console
 ---
@@ -33,10 +33,9 @@ library(packageSHA)
 source("R/functions.R")
 ```
 
-
 \RaggedRight
 \graphicspath{ {./images/} }
-<!-- \captionsetup[table]{labelformat=empty} -->
+
 
 # Introduction
 
@@ -44,9 +43,9 @@ Would densifying Roanoke’s population and jobs in certain locations encourage 
 
 # Proposed Scenarios
 
-Our first scenario is the projected "no-build" 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered "downtown", as well as those we considered "neighborhood centers". We mainly looked at the population densities to determine these TAZs, but we adjusted our selections slightly to preserve continuity and cohesiveness. The population densities and selected TAZs are shown in Figure \@ref(fig:populationDensity).
+Our first scenario is the projected "no-build" 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered "downtown", as well as those we considered "neighborhood centers". We mainly looked at the Area Type as given in the input data to determine these TAZs, but we adjusted our selections slightly to preserve continuity and cohesiveness. The population densities and selected TAZs are shown in Figure \@ref(fig:populationDensity).
 
-```{r populationDensity fig.cap="Population density and selected TAZs Downtown and Neighborhood Centers.}
+```{r populationDensity, fig.cap="Population density and selected TAZs Downtown and Neighborhood Centers."}
 
 #Set downtown zone IDs
 DTZones <- c(88,89,90,91,92,
@@ -92,7 +91,8 @@ TAZsplit <- TAZ %>%
   group_split()
 
 fillColors <- brewer.pal(4, "Oranges") %>% rev()
-colorColors <- c("grey60", "black", "blue")
+colorColors <- c("grey60", "blue", "black")
+borderSize <- 0.7
 
 ggplot(TAZ) +
   geom_sf(aes(fill = ATYPE, color = type)) +
@@ -100,8 +100,8 @@ ggplot(TAZ) +
   scale_fill_manual(values = fillColors) +
   scale_color_manual(values = colorColors) +
   guides(color = guide_legend(override.aes = list(size = 1))) +
-  geom_sf(data = TAZsplit[[2]], fill = NA, color = colorColors[2], size = 1) +
-  geom_sf(data = TAZsplit[[3]], fill = NA, color = colorColors[3], size = 1) +
+  geom_sf(data = TAZsplit[[2]], fill = NA, color = colorColors[2], size = borderSize) +
+  geom_sf(data = TAZsplit[[3]], fill = NA, color = colorColors[3], size = borderSize) +
   labs(
     fill = "Area Type",
     color = "Designation"
