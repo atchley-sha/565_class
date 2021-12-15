@@ -1,0 +1,49 @@
+purpose,mode,scenario,trips
+HBW,Drive Alone,2040 Base,120043.16
+HBW,Drive Alone,Neighborhood Centers,117216.57
+HBW,Drive Alone,Downtown,112610.66
+HBW,Ride Share,2040 Base,11662.34
+HBW,Ride Share,Neighborhood Centers,11386.1
+HBW,Ride Share,Downtown,10941.63
+HBW,Transit,2040 Base,4513.52
+HBW,Transit,Neighborhood Centers,6755.74
+HBW,Transit,Downtown,10022.54
+HBW,Non-motor,2040 Base,1749.12
+HBW,Non-motor,Neighborhood Centers,3018.32
+HBW,Non-motor,Downtown,4308.55
+HBO,Drive Alone,2040 Base,194720.45
+HBO,Drive Alone,Neighborhood Centers,187017.16
+HBO,Drive Alone,Downtown,181997.59
+HBO,Ride Share,2040 Base,203838.96
+HBO,Ride Share,Neighborhood Centers,195784.17
+HBO,Ride Share,Downtown,191638.7
+HBO,Transit,2040 Base,3482.86
+HBO,Transit,Neighborhood Centers,4705.98
+HBO,Transit,Downtown,6573.77
+HBO,Non-motor,2040 Base,45095.19
+HBO,Non-motor,Neighborhood Centers,59053.43
+HBO,Non-motor,Downtown,67881.97
+HBSC,Drive Alone,2040 Base,2163.33
+HBSC,Drive Alone,Neighborhood Centers,2711.27
+HBSC,Drive Alone,Downtown,2418.57
+HBSC,Ride Share,2040 Base,208.08
+HBSC,Ride Share,Neighborhood Centers,261.08
+HBSC,Ride Share,Downtown,232.17
+HBSC,Transit,2040 Base,56.28
+HBSC,Transit,Neighborhood Centers,45.04
+HBSC,Transit,Downtown,272.03
+HBSC,Non-motor,2040 Base,6239.3
+HBSC,Non-motor,Neighborhood Centers,5585.56
+HBSC,Non-motor,Downtown,5738.55
+NHB,Drive Alone,2040 Base,181098.45
+NHB,Drive Alone,Neighborhood Centers,179154.32
+NHB,Drive Alone,Downtown,177234.14
+NHB,Ride Share,2040 Base,169328.36
+NHB,Ride Share,Neighborhood Centers,167511.45
+NHB,Ride Share,Downtown,165717.31
+NHB,Transit,2040 Base,1552.59
+NHB,Transit,Neighborhood Centers,2362.79
+NHB,Transit,Downtown,3581.97
+NHB,Non-motor,2040 Base,5382.98
+NHB,Non-motor,Neighborhood Centers,8768.46
+NHB,Non-motor,Downtown,11626.82

@@ -1,0 +1,209 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Population and Job Densification in Roanoke},
+  pdfauthor={Hayden Atchley, Steven Goodsell, Austin Nichalson, Tristan Parker},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+
+\title{Population and Job Densification in Roanoke}
+\author{Hayden Atchley, Steven Goodsell, Austin Nichalson, Tristan Parker}
+\date{December 14, 2021}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\pagebreak
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Would densifying Roanoke's population and jobs in certain locations encourage multi-modal transportation and reduce problems like congestion? To seek answers to this question, our team used a trip-based model and changed the land-use inputs in the model by editing the projected 2040 social economic (SE) data. This allowed us to see how localizing population and job growth in the downtown area compares with the no-build 2040 scenario. We also wished to look at the effects of densifying ``neighborhood centers'' in comparison with the no-build scenario. We seek to identify if one or both of these land use policy changes would affect mode choice and traffic congestion, and to make a recommendation based on our findings.
+
+\hypertarget{proposed-scenarios}{%
+\section{Proposed Scenarios}\label{proposed-scenarios}}
+
+Our first scenario is the projected ``No-Build'' 2040 scenario, as given already in CUBE. For our other scenarios, we identified TAZs that we considered ``Downtown'', as well as those we considered ``Neighborhood Centers''. We mainly looked at the Area Type as given in the input data to determine these TAZs (with Downtown being urban and Neighborhood Centers being Exurban), but we adjusted our selections slightly to preserve continuity and cohesiveness. The area types and selected TAZs are shown in Figure \ref{fig:TAZTypes}.
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/TAZTypes-1} \caption{Population density and selected TAZs for Downtown and Neighborhood Centers scenarios.}\label{fig:TAZTypes}
+\end{figure}
+
+As a side note, this figure shows that we had one obviously erroneous zone designated as Downtown. This is likely due to the fact that the TAZ data has three almost identical identification columns, and we may have mismatched them when combining the various input data files. This was an oversight on our part, but we unfortunately did not have time to fix the error. Most of the findings should still be roughly accurate, however, as only a couple of zones were affected.
+
+To create the other scenarios, we adjusted the No-Build socioeconomic input data by moving 30\% of the population, jobs, etc. from the rural areas to the downtown and neighborhood centers areas, respectively. Figure \ref{fig:populationMap} shows the No-Build population and employment density by TAZ, and Figures \ref{fig:DTPOPDiff} and \ref{fig:NCPOPDiff} show the change from the No-Build scenario.
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/populationMap-1} \caption{Population by TAZ in No-Build scenario.}\label{fig:populationMap}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/DTPOPDiff-1} \caption{Population difference in Downtown scenario from No-Build.}\label{fig:DTPOPDiff}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/NCPOPDiff-1} \caption{Population difference in Neighborhood Centers scenario from No-Build.}\label{fig:NCPOPDiff}
+\end{figure}
+
+\pagebreak
+
+\hypertarget{scenario-analysis}{%
+\section{Scenario Analysis}\label{scenario-analysis}}
+
+\hypertarget{mode-choice}{%
+\subsection{Mode Choice}\label{mode-choice}}
+
+Both densification models significantly impacted the transportation system in Roanoke. Densifying the downtown area resulted in significantly more non-motorized trips, more than double transit trips, and fewer automobile trips overall. Focusing the densification in the selected neighborhood centers resulted in similarly increased non-motorized and transit trips, though not as dramatically, and decreased automobile trips. Figure \ref{fig:modeChoice} shows the mode choice distributions between the three models (taken as averages across all trip purposes).
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/modeChoice-1} \caption{Mode choice distribution in each scenario.}\label{fig:modeChoice}
+\end{figure}
+
+Both alternatives showed increased transit use over the No-Build scenario: the No-Build scenario predicted 7,794 boardings during peak transit hours, while the Neighborhood Centers and Downtown scenarios predicted 11,341 and 15,686 boardings, respectively. The Downtown scenario predicts more than double the transit ridership over the No-Build.
+
+\hypertarget{congestion}{%
+\subsection{Congestion}\label{congestion}}
+
+We used the volume to capacity ratio (V/C) as a rough measure of congestion. The Downtown scenario expectedly shows increased congestion in the downtown areas and decreased congestion outside of that (Figure \ref{fig:VCDT}). A similar trend can be seen in the Neighborhood Centers scenario with its respective areas (Figure \ref{fig:VCNC}).
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/VCDT-1} \caption{Difference in V/C in Downtown scenario compared to No-Build.}\label{fig:VCDT}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{_main_files/figure-latex/VCNC-1} \caption{Difference in V/C in Neighborhood Centers scenario compared to No-Build.}\label{fig:VCNC}
+\end{figure}
+
+These figures use the arithmetic difference between V/C ratios, so an increase of 0.5 indicates that the volume increased by half the capacity of the link. It is potentially concerning that there are some links that show an increase in V/C of 1, but there are only a couple small links for which that is the case. Since CUBE designates trips between TAZs rather than between coordinates, it could be that these links are the only path available in the model, but in reality there may be other roads drivers could use.
+
+It is worth noting that these scenarios don't take into account any new transportation infrastructure. It is no surprise then that a significant population increase would result in severe congestion on existing roadways. An increased investment into transit or other infrastructure could potentially alleviate most of this problem, but that would require further research and analysis.
+
+\hypertarget{vmt-and-vht}{%
+\subsection{VMT and VHT}\label{vmt-and-vht}}
+
+A notable impact on vehicle miles traveled (VMT) and vehicle hours traveled (VHT) can be seen between the scenarios. Table \ref{tab:VMT} shows these metrics for each alternative and how they compare to the No-Build.
+
+\begin{table}[!h]
+
+\caption{\label{tab:VMT}VMT and VHT by Scenario}
+\centering
+\begin{tabular}[t]{lrrrrrr}
+\toprule
+\multicolumn{3}{c}{ } & \multicolumn{4}{c}{Difference from No-Build} \\
+\cmidrule(l{3pt}r{3pt}){4-7}
+Scenario & Total VMT (miles) & Total VHT (hours) & VMT & VHT & \%VMT & \%VHT\\
+\midrule
+No-Build & 8539207 & 218971 & 0 & 0 & 0.00 & 0.00\\
+Neighborhood Centers & 8190453 & 217069 & -348754 & -1902 & -4.08 & -0.87\\
+Downtown & 7750413 & 191537 & -788794 & -27434 & -9.24 & -12.53\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both the Neighborhood Centers and Downtown scenarios predict a decrease in both VMT and VHT, but the difference in the Downtown scenario is much more dramatic, with around a 10\% reduction in VMT and a 12\% reduction in VHT. This could do a lot to reduce emissions, and there could potentially be even more of a reduction if better transit infrastructure was built in the downtown area.
+
+\hypertarget{recommendation}{%
+\section{Recommendation}\label{recommendation}}
+
+These scenarios offer a snapshot of how densifying the downtown area could promote multimodal use and reduce emissions. While there's more research to be done, we recommend densifying the downtown area. The congestion issue is localized and more easily solved by multi-modal improvements. In the neighborhood centers scenario, congestion on many local roads increased from the base model in different parts of the city. Planners would need to find solutions and funding to patch up multiple issue zones rather than the one issue zone of downtown. We assumed that the solution for downtown congestion would be less costly for one small area, but further cost analyses are important. Development of transit and more land use changes require additional research and modeling before taking the suggestion to densify downtown to the policy makers.
+
+Mitigation of congestion is hardly the downtown option's only virtue. It best promotes multi-modal transportation which we believe makes for more prosperous and pleasant city living. Benefits of robust multi-modal transportation systems include lower emissions, reduced traffic congestion, and increased aesthetic appeal of the area. Densifying the downtown area is predicted to significantly increase non-motorized transportation and more than double transit ridership. While both densifying projects save significant vehicle miles traveled and time spent traveling, the downtown model saves the most in both categories. Downtown reduces VMT by 440,040 miles more than the neighborhood centers. It also reduces VHT by 25,532 more hours.
+
+Despite the need for further research in cost analysis, transit development, and other factors, we recommend densifying the downtown area of Roanoke. Concentrating a large portion of the jobs and residents in the downtown area yields many benefits for the people of Roanoke while generating relatively minimal complications.
+
+\pagebreak
+
+\hypertarget{appendix}{%
+\section*{Appendix}\label{appendix}}
+\addcontentsline{toc}{section}{Appendix}
+
+\end{document}
